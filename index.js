@@ -1,11 +1,13 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
+const cors = require("cors");
 dotenv.config();
 require('./loader/db');
 const index= require('./routes/index')
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

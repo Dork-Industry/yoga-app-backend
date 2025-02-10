@@ -1,1 +1,1 @@
-# yoga-app-backend
+# yoga-app-node-backend
