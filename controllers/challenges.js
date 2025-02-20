@@ -1,107 +1,171 @@
-const { mongoose } = require("mongoose");
-const yogaworkoutChallenges = require("../models/challenges")
+const { mongoose, ObjectId } = require('mongoose');
+const yogaworkoutChallenges = require('../models/challenges');
+const { uploadFile, getFile, deleteFile } = require('../utility/s3');
 
 const getAllChallenges = async (req, res) => {
-    try {
-        let challenges = await yogaworkoutChallenges.find();
-        if (challenges.length === 0) {
-            return res.status(400).json({
-                message: "No Challenges Added!"
-            });
-        }
-        else {
-            res.status(200).json({
-                challenges
-            });
-        }
-    }
-    catch (e) {
-        console.error(e);
-        res.status(500).json({
-            message: "Server Error"
-        });
-    }
-}
+	try {
+		let challenges = await yogaworkoutChallenges.find().sort({ createdAt: -1 });
+		if (challenges.length === 0) {
+			return res.status(400).json({
+				message: 'No Challenges Added!',
+			});
+		} else {
+			const challengesWithImages = await Promise.all(
+				challenges.map(async (item) => {
+					const updatedItem = item.toObject ? item.toObject() : item;
+					if (item.image !== '') {
+						const imageurl = await getFile(item.image); // Assuming getFile is an async function
+						// console.log("imageurl", imageurl);
+						return { ...updatedItem, image: imageurl }; // Update the image URL
+					}
+					return updatedItem; // Return the item unchanged if no image update is needed
+				})
+			);
+			res.status(200).json({
+				challenges: challengesWithImages,
+			});
+		}
+	} catch (e) {
+		console.error(e);
+		res.status(500).json({
+			message: 'Server Error',
+		});
+	}
+};
 
 const addChallenges = async (req, res) => {
-    try {
-        if (!req.body.challengesName) {
-            return res.status(400).json({
-                message: "Enter Exercise Name!"
-            });
-        }
+	try {
+		if (!req.body.challengesName) {
+			return res.status(400).json({
+				message: 'Enter Challenge Name!',
+			});
+		}
+		let image = '';
+		if (req.file) {
+			const imageRes = await uploadFile(req.file, 'Challenges');
+			if (imageRes && imageRes.Key) {
+				image = imageRes.Key;
+			}
+		}
 
-        let challengesName = req.body.challengesName;
-        let description = req.body?.description;
-        let isActive = req.body.isActive ? req.body.isActive : 1;
+		let challengesName = req.body.challengesName;
+		let description = req.body?.description;
+		let isActive = req.body.isActive ? req.body.isActive : 1;
 
-        const newChallenges = new yogaworkoutChallenges({
-            challengesName: challengesName,
-            description: description,
-            isActive: isActive,
-        })
-        await newChallenges.save();
-        res.status(201).json({ message: 'Exercise Added successfully!' });
-    }
-    catch (e) {
-        console.error(e);
-        res.status(500).json({
-            message: "Server Error"
-        });
-    }
-}
+		const newChallenges = new yogaworkoutChallenges({
+			challengesName: challengesName,
+			description: description,
+			isActive: isActive,
+			image: image,
+		});
+		await newChallenges.save();
+		res.status(201).json({ message: 'Challenge Added successfully!' });
+	} catch (e) {
+		console.error(e);
+		res.status(500).json({
+			message: 'Server Error',
+		});
+	}
+};
 
 const updateChallenges = async (req, res) => {
-    const challengesId = req.params.id;
-    let challengesName = req.body.challengesName;
-    let description = req.body?.description;
-    let isActive = req.body.isActive ? req.body.isActive : 1;
+	if (!req.body.challengesName) {
+		return res.status(400).json({
+			message: 'Enter Challenge Name!',
+		});
+	}
+	const challengesId = req.params.id;
+	let challengesName = req.body.challengesName;
+	let description = req.body?.description;
+	let isActive = req.body.isActive ? req.body.isActive : 1;
 
-    let newChallenges = {
-        challengesName: challengesName,
-        description: description,
-        isActive: isActive,
-    }
-    // console.log("newExercise", newExercise)
-    if (mongoose.Types.ObjectId.isValid(challengesId)) {
+	let newChallenges = {
+		challengesName: challengesName,
+		description: description,
+		isActive: isActive,
+	};
+	if (mongoose.Types.ObjectId.isValid(challengesId)) {
+		const updatedChallenges = await yogaworkoutChallenges.findByIdAndUpdate(
+			challengesId,
+			newChallenges,
+			{
+				new: true, // Return the updated document
+				runValidators: true, // Run schema validators on update
+			}
+		);
+		if (!updatedChallenges) {
+			return res.status(404).json({ error: 'Challenges not found' });
+		}
 
-        const updatedChallenges = await yogaworkoutChallenges.findByIdAndUpdate(challengesId, newChallenges, {
-            new: true, // Return the updated document
-            runValidators: true, // Run schema validators on update
-        });
-        if (!updatedChallenges) {
-            return res.status(404).json({ error: 'Challenges not found' });
-        }
+		res.json(updatedChallenges);
+	} else {
+		res.status(500).send({
+			message: 'Invalid ObjectId',
+		});
+	}
+};
 
-        res.json(updatedChallenges);
+const deleteChallenges = async (req, res) => {
+	const challengesId = req.params.id;
 
-    } else {
-        res.status(500).send({
-            message: 'Invalid ObjectId'
-        });
-    }
-}
+	if (!mongoose.Types.ObjectId.isValid(challengesId)) {
+		return res.status(400).json({ error: 'Invalid challenges ID' });
+	}
 
-const deleteChallenges = async(req,res) => {
-    const challengesId = req.params.id;
+	try {
+		const documentExists = await yogaworkoutChallenges.findOne({ _id: challengesId, });
+		if (documentExists) {
+			const deletedChallenges = await yogaworkoutChallenges.findByIdAndDelete(
+				challengesId
+			);
+			if (deletedChallenges.deletedCount === 0) {
+				return res.status(404).json({ error: 'Challenges not found' });
+			}
+			else {
+				ImageToDelet = documentExists.image;
+				const imageRes = await deleteFile(ImageToDelet);
+				// console.log("imageRes", imageRes)
+			}
+			res.json({ message: 'Challenges deleted successfully', deletedChallenges });
+		}
+		else {
+			console.log('No document found to delete.');
+		}
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: 'Failed to delete Challenges' });
+	}
+};
 
-    if (!mongoose.Types.ObjectId.isValid(challengesId)) {
-        return res.status(400).json({ error: 'Invalid challenges ID' });
-    }
+const changeChallengesStatus = async (req, res) => {
+	let challengesId = req.body.id.toString();
+	let challengesStatus = req.body.status;
 
-    try {
-        // Find the user by ID and delete
-        const deletedChallenges = await yogaworkoutChallenges.findByIdAndDelete(challengesId);
+	console.log('req.body', req.body);
 
-        if (!deletedChallenges) {
-            return res.status(404).json({ error: 'Challenges not found' });
-        }
+	if (mongoose.Types.ObjectId.isValid(challengesId)) {
+		const updatedChallenges = await yogaworkoutChallenges.findOneAndUpdate(
+			{ _id: challengesId },
+			{ $set: { isActive: challengesStatus } },
+			{ returnDocument: 'after' }
+		);
+		// console.log('updatedChallenges', updatedChallenges);
+		if (!updatedChallenges) {
+			return res.status(404).json({ error: 'Challenges not found' });
+		}
 
-        res.json({ message: 'Challenges deleted successfully', deletedChallenges });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to delete Challenges' });
-    }
-}
+		res.json(updatedChallenges);
+	} else {
+		res.status(500).send({
+			message: 'Invalid ObjectId',
+		});
+	}
+};
 
-module.exports = { getAllChallenges, addChallenges, updateChallenges,deleteChallenges };
+module.exports = {
+	getAllChallenges,
+	addChallenges,
+	updateChallenges,
+	deleteChallenges,
+	changeChallengesStatus,
+};
