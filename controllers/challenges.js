@@ -122,14 +122,16 @@ const deleteChallenges = async (req, res) => {
 				return res.status(404).json({ error: 'Challenges not found' });
 			}
 			else {
-				ImageToDelet = documentExists.image;
-				const imageRes = await deleteFile(ImageToDelet);
-				// console.log("imageRes", imageRes)
+				if(documentExists.image) {
+					ImageToDelet = documentExists.image;
+					const imageRes = await deleteFile(ImageToDelet);
+					// console.log("imageRes", imageRes)
+				}
 			}
 			res.json({ message: 'Challenges deleted successfully', deletedChallenges });
 		}
 		else {
-			console.log('No document found to delete.');
+			res.status(500).json({ error: 'No document found to delete.' });
 		}
 	} catch (err) {
 		console.error(err);

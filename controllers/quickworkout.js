@@ -161,9 +161,11 @@ const deleteQuickworkout = async (req, res) => {
 				return res.status(404).json({ error: 'Quickworkout not found' });
 			}
 			else {
-				ImageToDelet = documentExists.image;
-				const imageRes = await deleteFile(ImageToDelet);
-				// console.log("imageRes", imageRes)
+				if (documentExists.image) {
+					ImageToDelet = documentExists.image;
+					const imageRes = await deleteFile(ImageToDelet);
+					// console.log("imageRes", imageRes)
+				}
 			}
 
 			res.json({
@@ -172,7 +174,7 @@ const deleteQuickworkout = async (req, res) => {
 			});
 		}
 		else {
-			console.log('No document found to delete.');
+			res.status(500).json({ error: 'No document found to delete.' });
 		}
 
 	} catch (err) {

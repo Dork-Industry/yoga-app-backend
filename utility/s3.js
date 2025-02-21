@@ -32,6 +32,7 @@ const getFile = async (key) => {
 };
 
 const deleteFile = (key) => {
+    console.log("key", key)
     const params = {
         Bucket: process.env.S3_BUCKET_NAME,
         Key: key,
