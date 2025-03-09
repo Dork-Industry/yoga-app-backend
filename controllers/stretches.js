@@ -116,7 +116,7 @@ const updateStretches = async (req, res) => {
 		description: description,
 		isActive: isActive,
 	};
-	console.log('newStretches', newStretches);
+	// console.log('newStretches', newStretches);
 	if (mongoose.Types.ObjectId.isValid(stretchesId)) {
 		const updatedStretches = await yogaworkoutStretches.findByIdAndUpdate(
 			stretchesId,

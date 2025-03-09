@@ -1,6 +1,6 @@
 const { mongoose } = require('mongoose');
 const yogaworkoutExercise = require('../models/exercise');
-const s3 = require('../utility/s3');
+const { deleteFile, getFile, uploadFile } = require('../utility/s3');
 const yogaworkoutChallengesexercise = require('../models/challengesexercise');
 const yogaworkoutCategoryexercise = require('../models/categoryexercise');
 const yogaworkoutDiscoverexercise = require('../models/discoverexercise');
@@ -19,7 +19,7 @@ const getAllExercise = async (req, res) => {
 				exercises.map(async (item) => {
 					const updatedItem = item.toObject ? item.toObject() : item;
 					if (item.image !== '') {
-						const imageurl = await s3.getFile(item.image); // Assuming getFile is an async function
+						const imageurl = await getFile(item.image); // Assuming getFile is an async function
 						// console.log("imageurl", imageurl);
 						return { ...updatedItem, image: imageurl }; // Update the image URL
 					}
@@ -54,7 +54,7 @@ const addExercise = async (req, res) => {
 
 		let image = '';
 		if (req.file) {
-			const imageRes = await s3.uploadFile(req.file, 'Exercise');
+			const imageRes = await uploadFile(req.file, 'Exercise');
 			if (imageRes && imageRes.Key) {
 				image = imageRes.Key;
 			}

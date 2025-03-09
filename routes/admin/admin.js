@@ -14,6 +14,7 @@ const categoryexerciseController = require('../../controllers/categoryexercise')
 const discoverexerciseController = require('../../controllers/discoverexercise');
 const quickworkoutexerciseController = require('../../controllers/quickworkoutexercise');
 const stretchesexerciseController = require('../../controllers/stretchesexercise');
+const settingController = require("../../controllers/setting");
 const router = express.Router();
 const multer = require('multer');
 
@@ -326,5 +327,11 @@ router.post(
 	stretchesexerciseController.changeStretchesexerciseStatus
 );
 // END: stretchesexercise module
+
+
+// START: settings module
+router.get('/settings',authenticate,  settingController.settings);
+router.post('/updatesetting', authenticate, settingController.updateSettings);
+// END: settings module
 
 module.exports = router;
