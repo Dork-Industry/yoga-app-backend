@@ -10,6 +10,7 @@ const settingController = require('../../controllers/userapis/settings');
 const weekController = require('../../controllers/userapis/week');
 const dayController = require('../../controllers/userapis/days');
 const challengesExerciseController = require('../../controllers/userapis/challengesexercise');
+const homeWorkoutController = require('../../controllers/userapis/homeworkout');
 
 // START: exercise module
 router.get('/exercise',  exerciseController.getAllExercise);
@@ -45,5 +46,10 @@ router.get('/stretches',  stretchesController.getAllStretches);
 // START: settings module
 router.get('/settings',  settingController.settings);
 // END: settings module
+
+// START: homeWorkout module
+// TODO: Check authentication for below
+router.post('/gethomeworkout',  homeWorkoutController.getHomeWorkout);
+// END: homeWorkout module
 
 module.exports = router;
