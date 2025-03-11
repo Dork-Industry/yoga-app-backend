@@ -35,4 +35,6 @@ const getAllChallenges = async (req, res) => {
     }
 };
 
+
+
 module.exports = { getAllChallenges }

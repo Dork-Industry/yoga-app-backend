@@ -9,6 +9,7 @@ const stretchesController = require('../../controllers/userapis/stretches');
 const settingController = require('../../controllers/userapis/settings');
 const weekController = require('../../controllers/userapis/week');
 const dayController = require('../../controllers/userapis/days');
+const challengesExerciseController = require('../../controllers/userapis/challengesexercise');
 
 // START: exercise module
 router.get('/exercise',  exerciseController.getAllExercise);
@@ -22,6 +23,7 @@ router.get('/category',  categoryController.getAllCategories);
 router.get('/challenges',  challengesController.getAllChallenges);
 router.post('/getweek', weekController.getWeek);
 router.post('/getdays', dayController.getDay);
+router.post('/challengesexercise', challengesExerciseController.getChallengesExercise);
 // END: challenges module
 
 // START: discover module
