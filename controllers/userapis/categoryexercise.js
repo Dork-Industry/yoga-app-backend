@@ -1,13 +1,13 @@
-const yogaworkoutChallengesexercise = require('../../models/challengesexercise');
+const yogaworkoutCategoryexercise = require('../../models/categoryexercise');
 const s3 = require('../../utility/s3');
 
-const getChallengesExercise = async (req, res) => {
+const getExerciseByCategoryId = async (req, res) => {
 	try {
-		if (req.body.days_id) {
-			let days_id = req.body.days_id;
-			const result = await yogaworkoutChallengesexercise.aggregate([
+		if (req.body.category_id) {
+			const category_Id = req.body.category_id;
+			const categoryexercises = await yogaworkoutCategoryexercise.aggregate([
 				{
-					$match: { daysId: days_id },
+					$match: { categoryId: category_Id },
 				},
 				{
 					$lookup: {
@@ -29,8 +29,8 @@ const getChallengesExercise = async (req, res) => {
 					},
 				},
 			]);
-			const challengesexercisesWithImages = await Promise.all(
-				result.map(async (item) => {
+			const categoryexercisesWithImages = await Promise.all(
+				categoryexercises.map(async (item) => {
 					const updatedItem = item.toObject ? item.toObject() : item;
 					if (item.exercise_Id?.image !== '') {
 						const imageurl = await s3.getFile(item?.image); // Assuming getFile is an async function
@@ -45,8 +45,8 @@ const getChallengesExercise = async (req, res) => {
 			);
 			res.status(200).json({
 				success: 1,
-				exercise: challengesexercisesWithImages,
-				error: ''
+				exercise: categoryexercisesWithImages,
+				error: '',
 			});
 		} else {
 			res.status(200).json({
@@ -65,4 +65,6 @@ const getChallengesExercise = async (req, res) => {
 	}
 };
 
-module.exports = { getChallengesExercise };
+module.exports = {
+	getExerciseByCategoryId,
+};

@@ -11,45 +11,52 @@ const weekController = require('../../controllers/userapis/week');
 const dayController = require('../../controllers/userapis/days');
 const challengesExerciseController = require('../../controllers/userapis/challengesexercise');
 const homeWorkoutController = require('../../controllers/userapis/homeworkout');
+const categoryExerciseController = require('../../controllers/userapis/categoryexercise');
+const userController = require('../../controllers/userapis/user');
+
+
+//START : User Module
+router.post('/register', userController.register);
+router.post('/login', userController.login);
 
 // START: exercise module
-router.get('/exercise',  exerciseController.getAllExercise);
+router.get('/exercise', exerciseController.getAllExercise);
 // END: exercise module
 
 // START: category module
-router.get('/category',  categoryController.getAllCategories);
+router.get('/category', categoryController.getAllCategories);
+router.post('/categoryexercise', categoryExerciseController.getExerciseByCategoryId);
 // END: category module
 
 // START: challenges module
-router.get('/challenges',  challengesController.getAllChallenges);
+router.get('/challenges', challengesController.getAllChallenges);
 router.post('/getweek', weekController.getWeek);
 router.post('/getdays', dayController.getDay);
-router.post('/challengesexercise', challengesExerciseController.getChallengesExercise);
+router.post(
+	'/challengesexercise',
+	challengesExerciseController.getChallengesExercise
+);
 // END: challenges module
 
 // START: discover module
-router.get('/discover',  discoverController.getAllDiscovers);
+router.get('/discover', discoverController.getAllDiscovers);
 // END: discover module
 
 // START: quickworkout module
-router.get(
-	'/quickworkout',
-	quickworkoutController.getAllQuickworkouts
-);
+router.get('/quickworkout', quickworkoutController.getAllQuickworkouts);
 // END: quickworkout module
 
 // START: stretches module
-router.get('/stretches',  stretchesController.getAllStretches);
+router.get('/stretches', stretchesController.getAllStretches);
 // END: stretches module
 
-
 // START: settings module
-router.get('/settings',  settingController.settings);
+router.get('/settings', settingController.settings);
 // END: settings module
 
 // START: homeWorkout module
 // TODO: Check authentication for below
-router.post('/gethomeworkout',  homeWorkoutController.getHomeWorkout);
+router.post('/gethomeworkout', homeWorkoutController.getHomeWorkout);
 // END: homeWorkout module
 
 module.exports = router;

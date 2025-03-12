@@ -2,7 +2,6 @@ const { mongoose, ObjectId } = require('mongoose');
 const yogaworkoutWeek = require('../../models/week');
 const yogaworkoutDays = require('../../models/days');
 
-
 /**
  * @api {get} /getWeeks
  * @apiName getAllWeeks
@@ -13,46 +12,47 @@ const yogaworkoutDays = require('../../models/days');
  */
 const getWeek = async (req, res) => {
 	try {
-
 		if (req.body.challenges_id) {
 			let challenges_id = req.body.challenges_id;
 			const result = await yogaworkoutWeek.aggregate([
 				{
-					$match: { challengesId: challenges_id }
+					$match: { challengesId: challenges_id },
 				},
 				{
 					$lookup: {
 						from: 'yogaworkoutDays',
-						localField: "_id",
-						foreignField: "weekId",
-						as: 'days'
-					}
+						localField: '_id',
+						foreignField: 'weekId',
+						as: 'days',
+					},
 				},
 				{
 					$project: {
-						_id:1,
+						_id: 1,
 						weekName: 1,
-						challengesId:1,
-						totalDays: { $size: "$days" }
-					}
-				}
-			])
+						challengesId: 1,
+						totalDays: { $size: '$days' },
+					},
+				},
+			]);
 			res.status(200).json({
-				result,
+				success: 0,
+				week: result,
+				error: '',
 			});
-		}
-		else {
+		} else {
 			res.status(200).json({
 				success: 0,
 				week: [],
-				error: 'Variable not set'
-			})
+				error: 'Variable not set',
+			});
 		}
-
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
-			message: 'Server Error',
+			success: 0,
+			week: [],
+			error: 'Server Error',
 		});
 	}
 };
@@ -73,7 +73,8 @@ const getWeeksByChallengesId = async (req, res) => {
 			return res.status(400).json({ error: 'Invalid Challenges ID' });
 		}
 
-		const weeks = await yogaworkoutWeek.find({ challenges_Id: challengesId })
+		const weeks = await yogaworkoutWeek
+			.find({ challenges_Id: challengesId })
 			.populate({
 				path: 'challenges_Id',
 				select: '_id challengesName',
@@ -94,8 +95,6 @@ const getWeeksByChallengesId = async (req, res) => {
 		});
 	}
 };
-
-
 
 module.exports = {
 	getWeek,
