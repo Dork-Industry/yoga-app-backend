@@ -8,9 +8,7 @@ const getAllQuickworkouts = async (req, res) => {
 			.sort({ createdAt: -1 });
 		if (quickworkouts.length === 0) {
 			return res.status(400).json({
-				success: 0,
-				quickworkout: [],
-				error: 'Please Try Again',
+				data: { success: 0, quickworkout: [], error: 'Please Try Again' },
 			});
 		} else {
 			const quickworkoutsWithImages = await Promise.all(
@@ -26,18 +24,18 @@ const getAllQuickworkouts = async (req, res) => {
 			);
 			res.status(200).json({
 				data: {
-					success: 1,
-					quickworkout: quickworkoutsWithImages,
-					error: '',
+					data: {
+						success: 1,
+						quickworkout: quickworkoutsWithImages,
+						error: '',
+					},
 				},
 			});
 		}
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
-			success: 0,
-			quickworkout: [],
-			error: 'Server Error',
+			data: { success: 0, quickworkout: [], error: 'Server Error' },
 		});
 	}
 };

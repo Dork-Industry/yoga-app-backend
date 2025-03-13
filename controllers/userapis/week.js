@@ -21,7 +21,7 @@ const getWeek = async (req, res) => {
 				{
 					$lookup: {
 						from: 'yogaworkoutDays',
-						localField: '_id',
+						localField: 'weekId',
 						foreignField: 'weekId',
 						as: 'days',
 					},
@@ -31,28 +31,23 @@ const getWeek = async (req, res) => {
 						_id: 1,
 						weekName: 1,
 						challengesId: 1,
+						challenges_Id: 1,
 						totalDays: { $size: '$days' },
 					},
 				},
 			]);
 			res.status(200).json({
-				success: 0,
-				week: result,
-				error: '',
+				data: { success: 1, week: result, error: '' },
 			});
 		} else {
 			res.status(200).json({
-				success: 0,
-				week: [],
-				error: 'Variable not set',
+				data: { success: 0, week: [], error: 'Variable not set' },
 			});
 		}
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
-			success: 0,
-			week: [],
-			error: 'Server Error',
+			data: { success: 0, week: [], error: 'Server Error' },
 		});
 	}
 };

@@ -21,7 +21,7 @@ const getDay = async (req, res) => {
 				{
 					$lookup: {
 						from: 'yogaworkoutChallengesexercise',
-						localField: '_id',
+						localField: 'daysId',
 						foreignField: 'daysId',
 						as: 'exercises',
 					},
@@ -36,23 +36,17 @@ const getDay = async (req, res) => {
 				},
 			]);
 			res.status(200).json({
-				success: 1,
-				days: result,
-				error: '',
+				data: { success: 1, days: result, error: '' },
 			});
 		} else {
 			res.status(200).json({
-				success: 0,
-				days: [],
-				error: 'Variable not set',
+				data: { success: 0, days: [], error: 'Variable not set' },
 			});
 		}
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
-			success: 0,
-			days: [],
-			error: 'Server Error',
+			data: { success: 0, days: [], error: 'Server Error' },
 		});
 	}
 };

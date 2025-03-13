@@ -6,9 +6,7 @@ const getAllDiscovers = async (req, res) => {
 		let discovers = await yogaworkoutDiscover.find().sort({ createdAt: -1 });
 		if (discovers.length === 0) {
 			return res.status(400).json({
-				success: 0,
-				discover: [],
-				error: 'Please Try Again',
+				data: { success: 0, discover: [], error: 'Please Try Again' },
 			});
 		} else {
 			const discoversWithImages = await Promise.all(
@@ -24,19 +22,13 @@ const getAllDiscovers = async (req, res) => {
 			);
 
 			res.status(200).json({
-				data: {
-					success: 1,
-					discover: discoversWithImages,
-					error: '',
-				},
+				data: { success: 1, discover: discoversWithImages, error: '' },
 			});
 		}
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
-			success: 0,
-			discover: [],
-			error: 'Server Error',
+			data: { success: 0, discover: [], error: 'Server Error' },
 		});
 	}
 };

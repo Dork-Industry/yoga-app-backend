@@ -5,25 +5,17 @@ const settings = async (req, res) => {
 		let settings = await yogaworkoutSetting.find().sort({ createdAt: -1 });
 		if (settings.length === 0) {
 			return res.status(400).json({
-				success: 0,
-				settings: [],
-				error: 'Please Try Again',
+				data: { success: 0, settings: [], error: 'Please Try Again' },
 			});
 		} else {
 			res.status(200).json({
-				data: {
-					success: 1,
-					settings: settings,
-					error: '',
-				},
+				data: { success: 1, settings: settings, error: '' },
 			});
 		}
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
-			success: 0,
-			settings: [],
-			error: 'Server Error',
+			data: { success: 0, settings: [], error: 'Server Error' },
 		});
 	}
 };

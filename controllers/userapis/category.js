@@ -6,9 +6,7 @@ const getAllCategories = async (req, res) => {
 		let categories = await yogaworkoutCategory.find().sort({ createdAt: -1 });
 		if (categories.length === 0) {
 			return res.status(400).json({
-				success: 0,
-				category: [],
-				error: 'Please Try Again',
+				data: { success: 0, category: [], error: 'Please Try Again' },
 			});
 		} else {
 			const categoryWithImages = await Promise.all(
@@ -23,19 +21,13 @@ const getAllCategories = async (req, res) => {
 				})
 			);
 			res.status(200).json({
-				data: {
-					success: 1,
-					category: categoryWithImages,
-					error: '',
-				},
+				data: { success: 1, category: categoryWithImages, error: '' },
 			});
 		}
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
-			success: 0,
-			category: [],
-			error: 'Server Error',
+			data: { success: 0, category: [], error: 'Server Error' },
 		});
 	}
 };

@@ -10,23 +10,17 @@ const getHomeWorkout = async (req, res) => {
 				},
 			]);
 			res.status(200).json({
-				success: 1,
-				homeworkout: result,
-				error: '',
+				data: { success: 1, homeworkout: result, error: '' },
 			});
 		} else {
 			res.status(200).json({
-				success: 0,
-				homeworkout: [],
-				error: 'Variable not set',
+				data: { success: 0, homeworkout: [], error: 'Variable not set' },
 			});
 		}
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
-			success: 0,
-			homeworkout: [],
-			error: 'Server Error',
+			data: { success: 0, homeworkout: [], error: 'Server Error' },
 		});
 	}
 };

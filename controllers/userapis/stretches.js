@@ -6,9 +6,7 @@ const getAllStretches = async (req, res) => {
 		let stretchess = await yogaworkoutStretches.find().sort({ createdAt: -1 });
 		if (stretchess.length === 0) {
 			return res.status(400).json({
-				success: 0,
-				stretches: [],
-				error: 'Please Try Again',
+				data: { success: 0, stretches: [], error: 'Please Try Again' },
 			});
 		} else {
 			const stretchessWithImages = await Promise.all(
@@ -23,19 +21,13 @@ const getAllStretches = async (req, res) => {
 				})
 			);
 			res.status(200).json({
-				data: {
-					success: 1,
-					stretches: stretchessWithImages,
-					error: '',
-				},
+				data: { success: 1, stretches: stretchessWithImages, error: '' },
 			});
 		}
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
-			success: 0,
-			stretches: [],
-			error: 'Server Error',
+			data: { success: 0, stretches: [], error: 'Server Error' },
 		});
 	}
 };

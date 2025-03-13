@@ -44,23 +44,17 @@ const getExerciseByCategoryId = async (req, res) => {
 				})
 			);
 			res.status(200).json({
-				success: 1,
-				exercise: categoryexercisesWithImages,
-				error: '',
+				data: { success: 1, exercise: categoryexercisesWithImages, error: '' },
 			});
 		} else {
 			res.status(200).json({
-				success: 0,
-				exercise: [],
-				error: 'Variable not set',
+				data: { success: 0, exercise: [], error: 'Variable not set' },
 			});
 		}
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
-			success: 0,
-			exercise: [],
-			error: 'Server Error',
+			data: { success: 0, exercise: [], error: 'Server Error' },
 		});
 	}
 };
