@@ -16,13 +16,13 @@ const getDay = async (req, res) => {
 			let week_id = req.body.week_id;
 			const result = await yogaworkoutDays.aggregate([
 				{
-					$match: { weekId: week_id },
+					$match: { week_Id: new mongoose.Types.ObjectId(week_id) },
 				},
 				{
 					$lookup: {
 						from: 'yogaworkoutChallengesexercise',
-						localField: 'daysId',
-						foreignField: 'daysId',
+						localField: '_id',
+						foreignField: 'days_Id',
 						as: 'exercises',
 					},
 				},
@@ -30,7 +30,7 @@ const getDay = async (req, res) => {
 					$project: {
 						_id: 1,
 						daysName: 1,
-						weekId: 1,
+						week_Id: 1,
 						totalExercises: { $size: '$exercises' },
 					},
 				},

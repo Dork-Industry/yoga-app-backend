@@ -1,3 +1,4 @@
+const { mongoose, ObjectId } = require('mongoose');
 const yogaworkoutCategoryexercise = require('../../models/categoryexercise');
 const s3 = require('../../utility/s3');
 
@@ -7,25 +8,32 @@ const getExerciseByCategoryId = async (req, res) => {
 			const category_Id = req.body.category_id;
 			const categoryexercises = await yogaworkoutCategoryexercise.aggregate([
 				{
-					$match: { categoryId: category_Id },
+					$match: { category_Id: new mongoose.Types.ObjectId(category_Id) },
 				},
 				{
 					$lookup: {
 						from: 'yogaworkoutExercise',
-						localField: 'exerciseId',
-						foreignField: 'exerciseId',
+						localField: 'exercise_Id',
+						foreignField: '_id',
 						as: 'Exercise',
 					},
 				},
 				{
-					$unwind: '$Exercise', // Deconstruct the Exercise array
-				},
-				{
-					$replaceRoot: { newRoot: '$Exercise' }, // Replace the root with the Exercise document
-				},
-				{
 					$project: {
-						totalDays: 0, // Exclude the totalDays field if it exists
+						Exercise: 1, // Check if the 'Exercise' field is being populated
+					},
+				},
+				{
+					$unwind: {
+						path: '$Exercise', // Deconstruct the Exercise array
+						preserveNullAndEmptyArrays: true, // If no Exercise matched, don't exclude the document
+					},
+				},
+				{
+					$replaceRoot: {
+						newRoot: {
+							$ifNull: ['$Exercise', { message: 'No Exercise found' }], // If Exercise is missing, provide a fallback object
+						},
 					},
 				},
 			]);
