@@ -198,7 +198,7 @@ const login = async (req, res) => {
 							login: {
 								userdetail: Loginuser,
 								session: session,
-								error: 'Login Successfully',
+								error: '',
 							},
 						},
 					});
