@@ -15,6 +15,7 @@ const categoryExerciseController = require('../../controllers/userapis/categorye
 const userController = require('../../controllers/userapis/user');
 const weekCompletedController = require('../../controllers/userapis/weekcompleted');
 const dayCompletedController = require('../../controllers/userapis/daycompleted');
+const workoutCompletedController = require('../../controllers/userapis/workoutcompleted');
 
 
 //START : User Module
@@ -36,6 +37,7 @@ router.post('/challenges', challengesController.getAllChallenges);
 router.post('/getweek', weekController.getWeek);
 router.post('/weekcompleted', weekCompletedController.weekCompleted);
 router.post('/daycompleted', dayCompletedController.dayCompleted);
+router.post('/workoutcompleted', workoutCompletedController.workoutCompleted);
 router.post('/getdays', dayController.getDay);
 router.post(
 	'/challengesexercise',

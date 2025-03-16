@@ -221,6 +221,13 @@ const register = async (req, res) => {
 				});
 			}
 		}
+		else{
+			res.status(201).json({
+				success: 0,
+				exercise: [],
+				error: 'Variable not set',
+			});
+		}
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
