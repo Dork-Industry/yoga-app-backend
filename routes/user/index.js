@@ -19,6 +19,7 @@ const weekCompletedController = require('../../controllers/userapis/weekcomplete
 //START : User Module
 router.post('/register', userController.register);
 router.post('/login', userController.login);
+router.post('/checkalreadyregister',userController.checkAlreadyRegister);
 
 // START: exercise module
 router.get('/exercise', exerciseController.getAllExercise);
@@ -30,7 +31,7 @@ router.post('/categoryexercise', categoryExerciseController.getExerciseByCategor
 // END: category module
 
 // START: challenges module
-router.get('/challenges', challengesController.getAllChallenges);
+router.post('/challenges', challengesController.getAllChallenges);
 router.post('/getweek', weekController.getWeek);
 router.post('/weekcompleted', weekCompletedController.weekCompleted);
 router.post('/getdays', dayController.getDay);

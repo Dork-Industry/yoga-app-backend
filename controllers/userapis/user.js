@@ -77,6 +77,66 @@ const checkUserLogin = async (userId, session, deviceId) => {
 	}
 };
 
+const checkAlreadyRegister = async (req, res) => {
+	try {
+		const data = req.body;
+		if (data.mobile && data.mobile != '' && data.username && data.username != '') {
+			const mobile = data.mobile;
+			const username = data.username;
+			const checkalredyregister = await checkUserAlreadyRegister(username, mobile)
+			if (checkalredyregister) {
+				res.status(200).json({
+					data: {
+						success: 1,
+						login: {
+							userdetail: { '': '' },
+							session: '',
+							error: 'User already register',
+						},
+					},
+				});
+			}
+			else {
+				res.status(200).json({
+					data: {
+						success: 0,
+						login: {
+							userdetail: { '': '' },
+							session: '',
+							error: 'Please Try Again',
+						},
+					},
+				});
+			}
+		}
+		else {
+			res.status(201).json({
+				data: {
+					success: 0,
+					login: {
+						userdetail: { '': '' },
+						session: '',
+						error: 'Variable Not Set',
+					},
+				},
+			});
+		}
+	}
+	catch (e) {
+		console.error(e);
+		res.status(500).json({
+			data: {
+				success: 0,
+				login: {
+					userdetail: { '': '' },
+					session: '',
+					error: 'Server Error',
+				},
+			},
+		});
+	}
+}
+
 const register = async (req, res) => {
 	try {
 		let userDetails = req.body;
@@ -256,4 +316,4 @@ const login = async (req, res) => {
 	}
 };
 
-module.exports = { register, login, checkUserLogin };
+module.exports = { register, login, checkUserLogin, checkAlreadyRegister };
