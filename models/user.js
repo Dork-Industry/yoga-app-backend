@@ -73,12 +73,6 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-
-		device_id: {
-			type: Number,
-			required: true,
-			unique: true,
-		},
 		// userId: {
 		// 	type: Number,
 		// 	required: true,

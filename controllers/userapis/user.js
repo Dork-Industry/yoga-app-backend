@@ -137,6 +137,16 @@ const checkAlreadyRegister = async (req, res) => {
 	}
 }
 
+const userDetail = async (email) => {
+	const user = await yogaworkoutUser.findOne({ email: email });
+	if (user) {
+		return user
+	}
+	else {
+		return false;
+	}
+}
+
 const register = async (req, res) => {
 	try {
 		let userDetails = req.body;
@@ -190,6 +200,8 @@ const register = async (req, res) => {
 				});
 			} else {
 				const newUser = new yogaworkoutUser({
+					first_name: userDetails.first_name,
+					last_name: userDetails.last_name,
 					username: userDetails.username,
 					email: userDetails.email,
 					password: encryptDecrypt.encrypt_decrypt(
@@ -208,32 +220,65 @@ const register = async (req, res) => {
 					country: userDetails.country,
 					intensively: userDetails.intensively,
 					timeinweek: userDetails.timeinweek,
-					first_name: userDetails.first_name,
-					last_name: userDetails.last_name,
-					device_id: userDetails.device_id,
 				});
 
 				const savedUser = await newUser.save();
-				res.status(201).json({
-					success: 1,
-					login: savedUser,
-					message: 'Register Successfully',
-				});
+				if (savedUser) {
+					const newUserDetails = await userDetail(userDetails.email)
+					console.log("userDetails", userDetails)
+					if (userDetails) {
+						const session = await getSession(newUserDetails._id, userDetails.device_id)
+						res.status(201).json({
+							success: 1,
+							login: {
+								userdetail: newUserDetails,
+								session: session,
+								error: 'Register Successfully',
+							},
+						});
+					}
+					else {
+						res.status(201).json({
+							success: 1,
+							login: {
+								userdetail: newUserDetails,
+								session: "",
+								error: 'Please Try Again',
+							},
+						});
+					}
+				}
+				else {
+					res.status(201).json({
+						success: 0,
+						login: {
+							userdetail: [],
+							session: "",
+							error: 'Please Try Again',
+						},
+					});
+				}
 			}
 		}
-		else{
+		else {
 			res.status(201).json({
 				success: 0,
-				exercise: [],
-				error: 'Variable not set',
+				login: {
+					userdetail: [],
+					session: "",
+					error: 'Variable not set',
+				},
 			});
 		}
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
 			success: 0,
-			exercise: [],
-			error: 'Server Error',
+			login: {
+				userdetail: [],
+				session: "",
+				error: 'Server Error',
+			},
 		});
 	}
 };
