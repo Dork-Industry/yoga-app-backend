@@ -16,12 +16,15 @@ const userController = require('../../controllers/userapis/user');
 const weekCompletedController = require('../../controllers/userapis/weekcompleted');
 const dayCompletedController = require('../../controllers/userapis/daycompleted');
 const workoutCompletedController = require('../../controllers/userapis/workoutcompleted');
-
+const planController = require('../../controllers/userapis/plan');
 
 //START : User Module
 router.post('/register', userController.register);
 router.post('/login', userController.login);
-router.post('/checkalreadyregister',userController.checkAlreadyRegister);
+router.post('/checkalreadyregister', userController.checkAlreadyRegister);
+router.post('/forgotpassword', userController.forgotPassword);
+router.post('/changepassword', userController.changePassword);
+router.post('/updatepassword', userController.updatePassword);
 
 // START: exercise module
 router.get('/exercise', exerciseController.getAllExercise);
@@ -29,7 +32,10 @@ router.get('/exercise', exerciseController.getAllExercise);
 
 // START: category module
 router.get('/category', categoryController.getAllCategories);
-router.post('/categoryexercise', categoryExerciseController.getExerciseByCategoryId);
+router.post(
+	'/categoryexercise',
+	categoryExerciseController.getExerciseByCategoryId
+);
 // END: category module
 
 // START: challenges module
@@ -64,6 +70,11 @@ router.get('/settings', settingController.settings);
 // START: homeWorkout module
 // TODO: Check authentication for below
 router.post('/gethomeworkout', homeWorkoutController.getHomeWorkout);
+// END: homeWorkout module
+
+// START: homeWorkout module
+// TODO: Check authentication for below
+router.post('/plan', planController.getPlan);
 // END: homeWorkout module
 
 module.exports = router;

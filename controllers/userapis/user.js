@@ -1,3 +1,4 @@
+const { mongoose, ObjectId } = require('mongoose');
 const yogaworkoutUser = require('../../models/user');
 const yogaworkoutSession = require('../../models/session');
 const encryptDecrypt = require('../../utility/encryption'); // for encrypt and decrypt
@@ -71,8 +72,7 @@ const checkUserLogin = async (userId, session, deviceId) => {
 	});
 	if (existingSession) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
 };
@@ -80,10 +80,18 @@ const checkUserLogin = async (userId, session, deviceId) => {
 const checkAlreadyRegister = async (req, res) => {
 	try {
 		const data = req.body;
-		if (data.mobile && data.mobile != '' && data.username && data.username != '') {
+		if (
+			data.mobile &&
+			data.mobile != '' &&
+			data.username &&
+			data.username != ''
+		) {
 			const mobile = data.mobile;
 			const username = data.username;
-			const checkalredyregister = await checkUserAlreadyRegister(username, mobile)
+			const checkalredyregister = await checkUserAlreadyRegister(
+				username,
+				mobile
+			);
 			if (checkalredyregister) {
 				res.status(200).json({
 					data: {
@@ -95,8 +103,7 @@ const checkAlreadyRegister = async (req, res) => {
 						},
 					},
 				});
-			}
-			else {
+			} else {
 				res.status(200).json({
 					data: {
 						success: 0,
@@ -108,8 +115,7 @@ const checkAlreadyRegister = async (req, res) => {
 					},
 				});
 			}
-		}
-		else {
+		} else {
 			res.status(201).json({
 				data: {
 					success: 0,
@@ -121,8 +127,7 @@ const checkAlreadyRegister = async (req, res) => {
 				},
 			});
 		}
-	}
-	catch (e) {
+	} catch (e) {
 		console.error(e);
 		res.status(500).json({
 			data: {
@@ -135,17 +140,16 @@ const checkAlreadyRegister = async (req, res) => {
 			},
 		});
 	}
-}
+};
 
 const userDetail = async (email) => {
 	const user = await yogaworkoutUser.findOne({ email: email });
 	if (user) {
-		return user
-	}
-	else {
+		return user;
+	} else {
 		return false;
 	}
-}
+};
 
 const register = async (req, res) => {
 	try {
@@ -224,10 +228,13 @@ const register = async (req, res) => {
 
 				const savedUser = await newUser.save();
 				if (savedUser) {
-					const newUserDetails = await userDetail(userDetails.email)
+					const newUserDetails = await userDetail(userDetails.email);
 					// console.log("userDetails", userDetails)
 					if (userDetails) {
-						const session = await getSession(newUserDetails._id, userDetails.device_id)
+						const session = await getSession(
+							newUserDetails._id,
+							userDetails.device_id
+						);
 						res.status(201).json({
 							success: 1,
 							login: {
@@ -236,36 +243,33 @@ const register = async (req, res) => {
 								error: 'Register Successfully',
 							},
 						});
-					}
-					else {
+					} else {
 						res.status(201).json({
 							success: 1,
 							login: {
 								userdetail: newUserDetails,
-								session: "",
+								session: '',
 								error: 'Please Try Again',
 							},
 						});
 					}
-				}
-				else {
+				} else {
 					res.status(201).json({
 						success: 0,
 						login: {
 							userdetail: [],
-							session: "",
+							session: '',
 							error: 'Please Try Again',
 						},
 					});
 				}
 			}
-		}
-		else {
+		} else {
 			res.status(201).json({
 				success: 0,
 				login: {
 					userdetail: [],
-					session: "",
+					session: '',
 					error: 'Variable not set',
 				},
 			});
@@ -276,7 +280,7 @@ const register = async (req, res) => {
 			success: 0,
 			login: {
 				userdetail: [],
-				session: "",
+				session: '',
 				error: 'Server Error',
 			},
 		});
@@ -368,4 +372,181 @@ const login = async (req, res) => {
 	}
 };
 
-module.exports = { register, login, checkUserLogin, checkAlreadyRegister };
+const forgotPassword = async (req, res) => {
+	try {
+		const userbody = req.body;
+
+		if (userbody.mobile && userbody.mobile !== '') {
+			const user = await yogaworkoutUser.findOne({
+				mobile: userbody.mobile,
+			});
+			if (user) {
+				return res.json({
+					data: {
+						success: 1,
+						forgotpassword: { error: 'Please check mobile for code' },
+					},
+				});
+			} else {
+				return res.json({
+					data: { success: 0, forgotpassword: { error: 'Please try again' } },
+				});
+			}
+		} else {
+			return res.json({
+				data: { success: 0, forgotpassword: { error: 'Variable not set' } },
+			});
+		}
+	} catch (e) {
+		console.error(e);
+		res.status(500).json({
+			data: { success: 0, forgotpassword: { error: 'Server Error' } },
+		});
+	}
+};
+
+const changePassword = async (req, res) => {
+	try {
+		const userbody = req.body;
+
+		if (
+			userbody.mobile &&
+			userbody.mobile !== '' &&
+			userbody.newpassword &&
+			userbody.newpassword !== ''
+		) {
+			const user = await yogaworkoutUser.findOne({
+				mobile: userbody.mobile,
+			});
+			if (user) {
+				// Hash the new password
+				const hashedPassword = encryptDecrypt.encrypt_decrypt(
+					'encrypt',
+					userbody.newpassword
+				);
+				// Update the password in the database
+				const result = await yogaworkoutUser.updateOne(
+					{ _id: new mongoose.Types.ObjectId(user._id) },
+					{ $set: { password: hashedPassword } },
+					{ new: true } // Return the updated document
+				);
+
+				if (result) {
+					return res.json({
+						data: {
+							success: 1,
+							updatepassword: { error: 'Password changed successfully' },
+						},
+					});
+				} else {
+					return res.json({
+						data: { success: 0, updatepassword: { error: 'Please try again' } },
+					});
+				}
+			} else {
+				return res.json({
+					data: { success: 0, updatepassword: { error: 'Please try again' } },
+				});
+			}
+		} else {
+			return res.json({
+				data: { success: 0, updatepassword: { error: 'Variable not set' } },
+			});
+		}
+	} catch (e) {
+		console.error(e);
+		res.status(500).json({
+			data: { success: 0, updatepassword: { error: 'Server Error' } },
+		});
+	}
+};
+
+const updatePassword = async (req, res) => {
+	try {
+		const userbody = req.body;
+
+		// Validate input
+		if (
+			!(
+				userbody.user_id &&
+				userbody.user_id !== '' &&
+				userbody.session &&
+				userbody.session !== '' &&
+				userbody.device_id &&
+				userbody.device_id !== '' &&
+				userbody.newpassword &&
+				userbody.newpassword !== '' &&
+				userbody.oldpassword &&
+				userbody.oldpassword !== ''
+			)
+		) {
+			return res.status(400).json({
+				data: { success: 0, updatepassword: { error: 'Variable Not Set' } },
+			});
+		}
+
+		const checkuserLogin = await checkUserLogin(
+			userbody.user_id,
+			userbody.session,
+			userbody.device_id
+		);
+		if (checkuserLogin) {
+			const Loginuser = await yogaworkoutUser.findOne({
+				_id: new mongoose.Types.ObjectId(userbody.user_id),
+				password: encryptDecrypt.encrypt_decrypt(
+					'encrypt',
+					userbody.oldpassword
+				),
+			});
+			if (Loginuser) {
+				// Hash the new password
+				const hashedPassword = encryptDecrypt.encrypt_decrypt(
+					'encrypt',
+					userbody.newpassword
+				);
+				// Update the password in the database
+				const result = await yogaworkoutUser.updateOne(
+					{ _id: new mongoose.Types.ObjectId(Loginuser._id) },
+					{ $set: { password: hashedPassword } },
+					{ new: true } // Return the updated document
+				);
+
+				if (result) {
+					return res.json({
+						data: {
+							success: 1,
+							updatepassword: { error: 'Change password successfully' },
+						},
+					});
+				} else {
+					return res.json({
+						data: { success: 0, updatepassword: { error: 'Please try again' } },
+					});
+				}
+			} else {
+				return res.status(400).json({
+					data: { success: 0, updatepassword: { error: 'Old password wrong' } },
+				});
+			}
+		} else {
+			res.status(201).json({
+				data: { success: 0, updatepassword: { error: 'Please login first' } },
+			});
+		}
+	} catch (e) {
+		console.error(e);
+		res.status(500).json({
+			data: { success: 0, updatepassword: { error: 'Server Error' } },
+		});
+	}
+};
+
+module.exports = {
+	register,
+	login,
+	checkUserLogin,
+	checkAlreadyRegister,
+	forgotPassword,
+	changePassword,
+	updatePassword,
+};
