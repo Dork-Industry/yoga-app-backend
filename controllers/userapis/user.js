@@ -193,7 +193,7 @@ const register = async (req, res) => {
 			);
 			// console.log("checkUserRegister", checkUserRegister)
 			if (checkUserRegister) {
-				res.status(500).json({
+				res.status(201).json({
 					success: 0,
 					userdetail: [],
 					error: 'User already register',
@@ -225,7 +225,7 @@ const register = async (req, res) => {
 				const savedUser = await newUser.save();
 				if (savedUser) {
 					const newUserDetails = await userDetail(userDetails.email)
-					console.log("userDetails", userDetails)
+					// console.log("userDetails", userDetails)
 					if (userDetails) {
 						const session = await getSession(newUserDetails._id, userDetails.device_id)
 						res.status(201).json({
@@ -306,7 +306,7 @@ const login = async (req, res) => {
 					.select('-password -php_password');
 
 				if (Loginuser.length === 0) {
-					res.status(500).json({
+					res.status(201).json({
 						data: {
 							success: 0,
 							login: {
@@ -330,7 +330,7 @@ const login = async (req, res) => {
 					});
 				}
 			} else {
-				res.status(500).json({
+				res.status(201).json({
 					data: {
 						success: 0,
 						login: {
