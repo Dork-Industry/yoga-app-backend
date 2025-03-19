@@ -19,7 +19,7 @@ const addWeek = async (req, res) => {
 			});
 		}
 		if (!mongoose.Types.ObjectId.isValid(challenges_id)) {
-			return res.status(400).json({ error: 'Invalid Challenges ID' });
+			return res.status(400).json({ message: 'Invalid Challenges ID' });
 		}
 
 		const newWeek = new yogaworkoutWeek({
@@ -48,8 +48,9 @@ const getAllWeeks = async (req, res) => {
 	try {
 		let weeks = await yogaworkoutWeek.find();
 		if (weeks.length === 0) {
-			return res.status(400).json({
+			return res.status(200).json({
 				message: 'No Challenges Added!',
+				weeks:[]
 			});
 		} else {
 			res.status(200).json({
@@ -77,7 +78,7 @@ const getWeeksByChallengesId = async (req, res) => {
 	try {
 		const challengesId = req.params.id;
 		if (!mongoose.Types.ObjectId.isValid(challengesId)) {
-			return res.status(400).json({ error: 'Invalid Challenges ID' });
+			return res.status(400).json({ message: 'Invalid Challenges ID' });
 		}
 
 		const weeks = await yogaworkoutWeek.find({ challenges_Id: challengesId })
@@ -134,7 +135,7 @@ const updateWeek = async (req, res) => {
 			}
 		);
 		if (!updatedWeek) {
-			return res.status(404).json({ error: 'Week not found' });
+			return res.status(404).json({ message: 'Week not found' });
 		}
 
 		res.json(updatedWeek);
@@ -164,20 +165,20 @@ const deleteWeek = async (req, res) => {
 	const weekId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(weekId)) {
-		return res.status(400).json({ error: 'Invalid Week ID' });
+		return res.status(400).json({ message: 'Invalid Week ID' });
 	}
 
 	try {
 		const deletedWeek = await yogaworkoutWeek.deleteOne({ _id: weekId });
 
 		if (deletedWeek.deletedCount === 0) {
-			return res.status(404).json({ error: 'Week not found' });
+			return res.status(404).json({ message: 'Week not found' });
 		}
 
 		res.json({ message: 'Week deleted successfully', deletedWeek });
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Week' });
+		res.status(500).json({ message: 'Failed to delete Week' });
 	}
 };
 

@@ -11,8 +11,9 @@ const getAllExercise = async (req, res) => {
 	try {
 		let exercises = await yogaworkoutExercise.find().sort({ createdAt: -1 });
 		if (exercises.length === 0) {
-			return res.status(400).json({
+			return res.status(200).json({
 				message: 'No Exericises Added!',
+				exercises : []
 			});
 		} else {
 			const exercisesWithImages = await Promise.all(
@@ -106,7 +107,7 @@ const updateExercise = async (req, res) => {
 			}
 		);
 		if (!updatedExercise) {
-			return res.status(404).json({ error: 'Exercise not found' });
+			return res.status(404).json({ message: 'Exercise not found' });
 		}
 
 		res.json(updatedExercise);
@@ -121,7 +122,7 @@ const deleteExercise = async (req, res) => {
 	const exerciseId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(exerciseId)) {
-		return res.status(400).json({ error: 'Invalid exercise ID' });
+		return res.status(400).json({ message: 'Invalid exercise ID' });
 	}
 
 	try {
@@ -132,7 +133,7 @@ const deleteExercise = async (req, res) => {
 			);
 
 			if (deletedExercise.deletedCount === 0) {
-				return res.status(404).json({ error: 'Exercise not found' });
+				return res.status(404).json({ message: 'Exercise not found' });
 			}
 			else {
 
@@ -152,11 +153,11 @@ const deleteExercise = async (req, res) => {
 			res.json({ message: 'Exercise deleted successfully', deletedExercise });
 		}
 		else {
-			res.status(500).json({ error: 'No document found to delete.' });
+			res.status(500).json({ message: 'No document found to delete.' });
 		}
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Exercise' });
+		res.status(500).json({ message: 'Failed to delete Exercise' });
 	}
 };
 
@@ -182,7 +183,7 @@ const changeExerciseStatus = async (req, res) => {
 		);
 		// console.log('updatedExercise', updatedExercise);
 		if (!updatedExercise) {
-			return res.status(404).json({ error: 'Exercise not found' });
+			return res.status(404).json({ message: 'Exercise not found' });
 		}
 
 		res.json(updatedExercise);

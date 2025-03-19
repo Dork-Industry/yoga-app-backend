@@ -1,6 +1,7 @@
 const { mongoose } = require('mongoose');
 const yogaworkoutCategory = require('../models/category');
 const { uploadFile, getFile, deleteFile } = require('../utility/s3');
+const category = require('../models/category');
 
 /**
  * @api {get} /category
@@ -13,8 +14,9 @@ const getAllCategories = async (req, res) => {
 	try {
 		let categories = await yogaworkoutCategory.find().sort({ createdAt: -1 });
 		if (categories.length === 0) {
-			return res.status(400).json({
+			return res.status(200).json({
 				message: 'No Categories Added!',
+				categories : [],
 			});
 		} else {
 			const categoryWithImages = await Promise.all(
@@ -116,7 +118,7 @@ const updateCategory = async (req, res) => {
 		description: description,
 		isActive: isActive,
 	};
-	console.log('newCategory', newCategory);
+	// console.log('newCategory', newCategory);
 	if (mongoose.Types.ObjectId.isValid(categoryId)) {
 		const updatedCategory = await yogaworkoutCategory.findByIdAndUpdate(
 			categoryId,
@@ -127,7 +129,7 @@ const updateCategory = async (req, res) => {
 			}
 		);
 		if (!updatedCategory) {
-			return res.status(404).json({ error: 'Category not found' });
+			return res.status(404).json({ message: 'Category not found' });
 		}
 
 		res.json(updatedCategory);
@@ -153,7 +155,7 @@ const deleteCategory = async (req, res) => {
 	const categoryId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(categoryId)) {
-		return res.status(400).json({ error: 'Invalid category ID' });
+		return res.status(400).json({ message: 'Invalid category ID' });
 	}
 
 	try {
@@ -163,7 +165,7 @@ const deleteCategory = async (req, res) => {
 				_id: categoryId,
 			});
 			if (deletedCategory.deletedCount === 0) {
-				return res.status(404).json({ error: 'Category not found' });
+				return res.status(404).json({ message: 'Category not found' });
 			}
 			else{
 				if(documentExists.image) {
@@ -174,12 +176,12 @@ const deleteCategory = async (req, res) => {
 			}
 			res.json({ message: 'Category deleted successfully', deletedCategory });
 		} else {
-			res.status(500).json({ error: 'No document found to delete.' });
+			res.status(500).json({ message: 'No document found to delete.' });
 		}
 		
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Category' });
+		res.status(500).json({ message: 'Failed to delete Category' });
 	}
 };
 
@@ -207,7 +209,7 @@ const changeCategoryStatus = async (req, res) => {
 		);
 		// console.log('updatedCategory', updatedCategory);
 		if (!updatedCategory) {
-			return res.status(404).json({ error: 'Category not found' });
+			return res.status(404).json({ message: 'Category not found' });
 		}
 
 		res.json(updatedCategory);

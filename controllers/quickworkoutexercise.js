@@ -24,15 +24,15 @@ const addQuickworkoutexercises = async (req, res) => {
 		const { quickworkout_id, exercise_ids } = req.body;
 
 		if (!mongoose.Types.ObjectId.isValid(quickworkout_id)) {
-			return res.status(400).json({ error: 'Invalid Quickworkout ID' });
+			return res.status(400).json({ message: 'Invalid Quickworkout ID' });
 		}
 		if (!Array.isArray(exercise_ids) || exercise_ids.length === 0) {
 			return res
 				.status(400)
-				.json({ error: 'exercise_ids must be a non-empty array' });
+				.json({ message: 'exercise_ids must be a non-empty array' });
 		}
 		if (!exercise_ids.every(isValidObjectId)) {
-			return res.status(400).json({ error: 'Invalid Exercise ID format' });
+			return res.status(400).json({ message: 'Invalid Exercise ID format' });
 		}
 		const exercises = await yogaworkoutExercise.find({
 			_id: { $in: exercise_ids },
@@ -40,14 +40,14 @@ const addQuickworkoutexercises = async (req, res) => {
 		if (exercises.length !== exercise_ids.length) {
 			return res
 				.status(400)
-				.json({ error: 'One or more Exercise IDs are invalid' });
+				.json({ message: 'One or more Exercise IDs are invalid' });
 		}
 
 		let quickworkout = await yogaworkoutQuickworkout.findOne({
 			_id: quickworkout_id,
 		});
 		if (!quickworkout) {
-			return res.status(404).json({ error: 'Quickworkout not found' });
+			return res.status(404).json({ message: 'Quickworkout not found' });
 		}
 
 		const existingRecords = await yogaworkoutQuickworkoutexercise.find({
@@ -94,7 +94,7 @@ const getExerciseByQuickworkoutId = async (req, res) => {
 	try {
 		const quickworkout_Id = req.params.id;
 		if (!mongoose.Types.ObjectId.isValid(quickworkout_Id)) {
-			return res.status(400).json({ error: 'Invalid Quickworkout ID' });
+			return res.status(400).json({ message: 'Invalid Quickworkout ID' });
 		}
 
 		const quickworkoutexercises = await yogaworkoutQuickworkoutexercise
@@ -154,7 +154,7 @@ const deleteQuickworkoutexercise = async (req, res) => {
 	const quickworkoutexerciseId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(quickworkoutexerciseId)) {
-		return res.status(400).json({ error: 'Invalid Quickworkoutexercise ID' });
+		return res.status(400).json({ message: 'Invalid Quickworkoutexercise ID' });
 	}
 
 	try {
@@ -164,7 +164,7 @@ const deleteQuickworkoutexercise = async (req, res) => {
 			});
 
 		if (deletedQuickworkoutexercise.deletedCount === 0) {
-			return res.status(404).json({ error: 'Quickworkoutexercise not found' });
+			return res.status(404).json({ message: 'Quickworkoutexercise not found' });
 		}
 
 		res.json({
@@ -173,7 +173,7 @@ const deleteQuickworkoutexercise = async (req, res) => {
 		});
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Quickworkoutexercise' });
+		res.status(500).json({ message: 'Failed to delete Quickworkoutexercise' });
 	}
 };
 
@@ -200,7 +200,7 @@ const changeQuickworkoutexerciseStatus = async (req, res) => {
 			);
 
 		if (!updatedQuickworkoutexercise) {
-			return res.status(404).json({ error: 'Quickworkoutexercise not found' });
+			return res.status(404).json({ message: 'Quickworkoutexercise not found' });
 		}
 
 		res.json(updatedQuickworkoutexercise);

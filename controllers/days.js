@@ -24,9 +24,9 @@ const addDay = async (req, res) => {
 			});
 		}
 
-		console.log("week_Id", week_Id)
+		// console.log("week_Id", week_Id)
 		if (!mongoose.Types.ObjectId.isValid(week_Id)) {
-			return res.status(400).json({ error: 'Invalid Week ID' });
+			return res.status(400).json({ message: 'Invalid Week ID' });
 		}
 
 		const newDay = new yogaworkoutDays({
@@ -60,7 +60,7 @@ const getDaysByWeekId = async (req, res) => {
 	try {
 		const week_Id = req.params.id;
 		if (!mongoose.Types.ObjectId.isValid(week_Id)) {
-			return res.status(400).json({ error: 'Invalid Week ID' });
+			return res.status(200).json({ message: 'Invalid Week ID' });
 		}
 
 		const days = await yogaworkoutDays.find({ week_Id: week_Id })
@@ -119,7 +119,7 @@ const updateDay = async (req, res) => {
 			runValidators: true, // Run schema validators on update
 		});
 		if (!updatedDay) {
-			return res.status(404).json({ error: 'Day not found' });
+			return res.status(404).json({ message: 'Day not found' });
 		}
 
 		res.json(updatedDay);
@@ -149,20 +149,20 @@ const deleteDay = async (req, res) => {
 	const dayId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(dayId)) {
-		return res.status(400).json({ error: 'Invalid Day ID' });
+		return res.status(400).json({ message: 'Invalid Day ID' });
 	}
 
 	try {
 		const deletedDay = await yogaworkoutDays.deleteOne({ _id: dayId });
 
 		if (deletedDay.deletedCount === 0) {
-			return res.status(404).json({ error: 'Day not found' });
+			return res.status(404).json({ message: 'Day not found' });
 		}
 
 		res.json({ message: 'day deleted successfully', deletedDay });
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Day' });
+		res.status(500).json({ message: 'Failed to delete Day' });
 	}
 };
 

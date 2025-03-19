@@ -24,15 +24,15 @@ const addStretchesexercises = async (req, res) => {
 		const { stretches_id, exercise_ids } = req.body;
 
 		if (!mongoose.Types.ObjectId.isValid(stretches_id)) {
-			return res.status(400).json({ error: 'Invalid Stretches ID' });
+			return res.status(400).json({ message: 'Invalid Stretches ID' });
 		}
 		if (!Array.isArray(exercise_ids) || exercise_ids.length === 0) {
 			return res
 				.status(400)
-				.json({ error: 'exercise_ids must be a non-empty array' });
+				.json({ message: 'exercise_ids must be a non-empty array' });
 		}
 		if (!exercise_ids.every(isValidObjectId)) {
-			return res.status(400).json({ error: 'Invalid Exercise ID format' });
+			return res.status(400).json({ message: 'Invalid Exercise ID format' });
 		}
 		const exercises = await yogaworkoutExercise.find({
 			_id: { $in: exercise_ids },
@@ -40,12 +40,12 @@ const addStretchesexercises = async (req, res) => {
 		if (exercises.length !== exercise_ids.length) {
 			return res
 				.status(400)
-				.json({ error: 'One or more Exercise IDs are invalid' });
+				.json({ message: 'One or more Exercise IDs are invalid' });
 		}
 
 		let stretches = await yogaworkoutStretches.findOne({ _id: stretches_id });
 		if (!stretches) {
-			return res.status(404).json({ error: 'Stretches not found' });
+			return res.status(404).json({ message: 'Stretches not found' });
 		}
 
 		const existingRecords = await yogaworkoutStretchesexercise.find({
@@ -92,7 +92,7 @@ const getExerciseByStretchesId = async (req, res) => {
 	try {
 		const stretches_Id = req.params.id;
 		if (!mongoose.Types.ObjectId.isValid(stretches_Id)) {
-			return res.status(400).json({ error: 'Invalid Stretches ID' });
+			return res.status(400).json({ message: 'Invalid Stretches ID' });
 		}
 
 		const stretchesexercises = await yogaworkoutStretchesexercise
@@ -152,7 +152,7 @@ const deleteStretchesexercise = async (req, res) => {
 	const stretchesexerciseId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(stretchesexerciseId)) {
-		return res.status(400).json({ error: 'Invalid Stretchesexercise ID' });
+		return res.status(400).json({ message: 'Invalid Stretchesexercise ID' });
 	}
 
 	try {
@@ -162,7 +162,7 @@ const deleteStretchesexercise = async (req, res) => {
 			});
 
 		if (deletedStretchesexercise.deletedCount === 0) {
-			return res.status(404).json({ error: 'Stretchesexercise not found' });
+			return res.status(404).json({ message: 'Stretchesexercise not found' });
 		}
 
 		res.json({
@@ -171,7 +171,7 @@ const deleteStretchesexercise = async (req, res) => {
 		});
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Stretchesexercise' });
+		res.status(500).json({ message: 'Failed to delete Stretchesexercise' });
 	}
 };
 
@@ -198,7 +198,7 @@ const changeStretchesexerciseStatus = async (req, res) => {
 			);
 
 		if (!updatedStretchesexercise) {
-			return res.status(404).json({ error: 'Stretchesexercise not found' });
+			return res.status(404).json({ message: 'Stretchesexercise not found' });
 		}
 
 		res.json(updatedStretchesexercise);

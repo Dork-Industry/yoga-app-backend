@@ -14,8 +14,9 @@ const getAllDiscovers = async (req, res) => {
 	try {
 		let discovers = await yogaworkoutDiscover.find().sort({ createdAt: -1 });
 		if (discovers.length === 0) {
-			return res.status(400).json({
+			return res.status(200).json({
 				message: 'No Discovers Added!',
+				discovers: []
 			});
 		} else {
 			const discoversWithImages = await Promise.all(
@@ -117,7 +118,7 @@ const updateDiscover = async (req, res) => {
 		description: description,
 		isActive: isActive,
 	};
-	console.log('newDiscover', newDiscover);
+	// console.log('newDiscover', newDiscover);
 	if (mongoose.Types.ObjectId.isValid(discoverId)) {
 		const updatedDiscover = await yogaworkoutDiscover.findByIdAndUpdate(
 			discoverId,
@@ -128,7 +129,7 @@ const updateDiscover = async (req, res) => {
 			}
 		);
 		if (!updatedDiscover) {
-			return res.status(404).json({ error: 'Discover not found' });
+			return res.status(404).json({ message: 'Discover not found' });
 		}
 
 		res.json(updatedDiscover);
@@ -144,7 +145,7 @@ const deleteDiscover = async (req, res) => {
 	const discoverId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(discoverId)) {
-		return res.status(400).json({ error: 'Invalid discover ID' });
+		return res.status(400).json({ message: 'Invalid discover ID' });
 	}
 
 	try {
@@ -155,7 +156,7 @@ const deleteDiscover = async (req, res) => {
 			});
 
 			if (deletedDiscover.deletedCount === 0) {
-				return res.status(404).json({ error: 'Discover not found' });
+				return res.status(404).json({ message: 'Discover not found' });
 			}
 			else {
 				if(documentExists.image) {
@@ -168,12 +169,12 @@ const deleteDiscover = async (req, res) => {
 			res.json({ message: 'Discover deleted successfully', deletedDiscover });
 		}
 		else {
-			res.status(500).json({ error: 'No document found to delete.' });
+			res.status(500).json({ message: 'No document found to delete.' });
 		}
 
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Discover' });
+		res.status(500).json({ message: 'Failed to delete Discover' });
 	}
 };
 
@@ -201,7 +202,7 @@ const changeDiscoverStatus = async (req, res) => {
 		);
 		// console.log('updatedDiscover', updatedDiscover);
 		if (!updatedDiscover) {
-			return res.status(404).json({ error: 'Discover not found' });
+			return res.status(404).json({ message: 'Discover not found' });
 		}
 
 		res.json(updatedDiscover);

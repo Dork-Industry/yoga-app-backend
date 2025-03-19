@@ -60,7 +60,7 @@ router.get('/quickworkout', quickworkoutController.getAllQuickworkouts);
 // END: quickworkout module
 
 // START: stretches module
-router.get('/stretches', stretchesController.getAllStretches);
+router.post('/stretches', stretchesController.getAllStretches);
 // END: stretches module
 
 // START: settings module
@@ -68,13 +68,12 @@ router.get('/settings', settingController.settings);
 // END: settings module
 
 // START: homeWorkout module
-// TODO: Check authentication for below
 router.post('/gethomeworkout', homeWorkoutController.getHomeWorkout);
 // END: homeWorkout module
 
 // START: homeWorkout module
-// TODO: Check authentication for below
 router.post('/plan', planController.getPlan);
+router.post('/cancelplan', planController.cancelPlan);
 // END: homeWorkout module
 
 module.exports = router;

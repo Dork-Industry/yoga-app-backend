@@ -6,8 +6,9 @@ const getAllChallenges = async (req, res) => {
 	try {
 		let challenges = await yogaworkoutChallenges.find().sort({ createdAt: -1 });
 		if (challenges.length === 0) {
-			return res.status(400).json({
+			return res.status(200).json({
 				message: 'No Challenges Added!',
+				challenges : [],
 			});
 		} else {
 			const challengesWithImages = await Promise.all(
@@ -94,7 +95,7 @@ const updateChallenges = async (req, res) => {
 			}
 		);
 		if (!updatedChallenges) {
-			return res.status(404).json({ error: 'Challenges not found' });
+			return res.status(404).json({ message: 'Challenges not found' });
 		}
 
 		res.json(updatedChallenges);
@@ -109,7 +110,7 @@ const deleteChallenges = async (req, res) => {
 	const challengesId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(challengesId)) {
-		return res.status(400).json({ error: 'Invalid challenges ID' });
+		return res.status(400).json({ message: 'Invalid challenges ID' });
 	}
 
 	try {
@@ -119,7 +120,7 @@ const deleteChallenges = async (req, res) => {
 				challengesId
 			);
 			if (deletedChallenges.deletedCount === 0) {
-				return res.status(404).json({ error: 'Challenges not found' });
+				return res.status(404).json({ message: 'Challenges not found' });
 			}
 			else {
 				if(documentExists.image) {
@@ -131,11 +132,11 @@ const deleteChallenges = async (req, res) => {
 			res.json({ message: 'Challenges deleted successfully', deletedChallenges });
 		}
 		else {
-			res.status(500).json({ error: 'No document found to delete.' });
+			res.status(500).json({ message: 'No document found to delete.' });
 		}
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Challenges' });
+		res.status(500).json({ message: 'Failed to delete Challenges' });
 	}
 };
 
@@ -153,7 +154,7 @@ const changeChallengesStatus = async (req, res) => {
 		);
 		// console.log('updatedChallenges', updatedChallenges);
 		if (!updatedChallenges) {
-			return res.status(404).json({ error: 'Challenges not found' });
+			return res.status(404).json({ message: 'Challenges not found' });
 		}
 
 		res.json(updatedChallenges);

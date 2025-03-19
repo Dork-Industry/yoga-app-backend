@@ -13,8 +13,9 @@ const getAllStretches = async (req, res) => {
 	try {
 		let stretchess = await yogaworkoutStretches.find().sort({ createdAt: -1 });
 		if (stretchess.length === 0) {
-			return res.status(400).json({
+			return res.status(200).json({
 				message: 'No Stretches Added!',
+				stretchess:[]
 			});
 		} else {
 			const stretchessWithImages = await Promise.all(
@@ -127,7 +128,7 @@ const updateStretches = async (req, res) => {
 			}
 		);
 		if (!updatedStretches) {
-			return res.status(404).json({ error: 'Stretch not found' });
+			return res.status(404).json({ message: 'Stretch not found' });
 		}
 
 		res.json(updatedStretches);
@@ -143,7 +144,7 @@ const deleteStretches = async (req, res) => {
 	const stretchesId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(stretchesId)) {
-		return res.status(400).json({ error: 'Invalid Stretch ID' });
+		return res.status(400).json({ message: 'Invalid Stretch ID' });
 	}
 
 	try {
@@ -155,7 +156,7 @@ const deleteStretches = async (req, res) => {
 			});
 
 			if (deletedStretches.deletedCount === 0) {
-				return res.status(404).json({ error: 'Stretch not found' });
+				return res.status(404).json({ message: 'Stretch not found' });
 			}
 			else {
 				if(documentExists.image) {
@@ -169,12 +170,12 @@ const deleteStretches = async (req, res) => {
 		}
 		else {
 
-			res.status(500).json({ error: 'No document found to delete.' });
+			res.status(500).json({ message: 'No document found to delete.' });
 		}
 
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Stretch' });
+		res.status(500).json({ message: 'Failed to delete Stretch' });
 	}
 };
 
@@ -202,7 +203,7 @@ const changeStretchesStatus = async (req, res) => {
 		);
 		// console.log('updatedStretches', updatedStretches);
 		if (!updatedStretches) {
-			return res.status(404).json({ error: 'Stretches not found' });
+			return res.status(404).json({ message: 'Stretches not found' });
 		}
 
 		res.json(updatedStretches);

@@ -24,15 +24,15 @@ const addDiscoverexercises = async (req, res) => {
 		const { discover_id, exercise_ids } = req.body;
 
 		if (!mongoose.Types.ObjectId.isValid(discover_id)) {
-			return res.status(400).json({ error: 'Invalid Discover ID' });
+			return res.status(400).json({ message: 'Invalid Discover ID' });
 		}
 		if (!Array.isArray(exercise_ids) || exercise_ids.length === 0) {
 			return res
 				.status(400)
-				.json({ error: 'exercise_ids must be a non-empty array' });
+				.json({ message: 'exercise_ids must be a non-empty array' });
 		}
 		if (!exercise_ids.every(isValidObjectId)) {
-			return res.status(400).json({ error: 'Invalid Exercise ID format' });
+			return res.status(400).json({ message: 'Invalid Exercise ID format' });
 		}
 		const exercises = await yogaworkoutExercise.find({
 			_id: { $in: exercise_ids },
@@ -40,12 +40,12 @@ const addDiscoverexercises = async (req, res) => {
 		if (exercises.length !== exercise_ids.length) {
 			return res
 				.status(400)
-				.json({ error: 'One or more Exercise IDs are invalid' });
+				.json({ message: 'One or more Exercise IDs are invalid' });
 		}
 
 		let discover = await yogaworkoutDiscover.findOne({ _id: discover_id });
 		if (!discover) {
-			return res.status(404).json({ error: 'Discover not found' });
+			return res.status(404).json({ message: 'Discover not found' });
 		}
 
 		const existingRecords = await yogaworkoutDiscoverexercise.find({
@@ -92,7 +92,7 @@ const getExerciseByDiscoverId = async (req, res) => {
 	try {
 		const discover_Id = req.params.id;
 		if (!mongoose.Types.ObjectId.isValid(discover_Id)) {
-			return res.status(400).json({ error: 'Invalid Discover ID' });
+			return res.status(400).json({ message: 'Invalid Discover ID' });
 		}
 
 		const discoverexercises = await yogaworkoutDiscoverexercise
@@ -152,7 +152,7 @@ const deleteDiscoverexercise = async (req, res) => {
 	const discoverexerciseId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(discoverexerciseId)) {
-		return res.status(400).json({ error: 'Invalid Discoverexercise ID' });
+		return res.status(400).json({ message: 'Invalid Discoverexercise ID' });
 	}
 
 	try {
@@ -163,7 +163,7 @@ const deleteDiscoverexercise = async (req, res) => {
 		);
 
 		if (deletedDiscoverexercise.deletedCount === 0) {
-			return res.status(404).json({ error: 'Discoverexercise not found' });
+			return res.status(404).json({ message: 'Discoverexercise not found' });
 		}
 
 		res.json({
@@ -172,7 +172,7 @@ const deleteDiscoverexercise = async (req, res) => {
 		});
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Discoverexercise' });
+		res.status(500).json({ message: 'Failed to delete Discoverexercise' });
 	}
 };
 
@@ -199,7 +199,7 @@ const changeDiscoverexerciseStatus = async (req, res) => {
 			);
 
 		if (!updatedDiscoverexercise) {
-			return res.status(404).json({ error: 'Discoverexercise not found' });
+			return res.status(404).json({ message: 'Discoverexercise not found' });
 		}
 
 		res.json(updatedDiscoverexercise);

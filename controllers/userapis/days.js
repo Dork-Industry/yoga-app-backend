@@ -1,6 +1,7 @@
 const { mongoose, ObjectId } = require('mongoose');
-const yogaworkoutChallengesexercise = require('../../models/challengesexercise');
+const { checkUserLogin } = require('./user');
 const yogaworkoutDays = require('../../models/days');
+const yogaworkoutDaysCompleted = require('../../models/dayscompleted');
 
 /**
  * @api {get} /getDays
@@ -12,8 +13,29 @@ const yogaworkoutDays = require('../../models/days');
  */
 const getDay = async (req, res) => {
 	try {
-		if (req.body.week_id) {
-			let week_id = req.body.week_id;
+		const data = req.body;
+		if (
+			data.user_id &&
+			data.user_id !== '' &&
+			data.session &&
+			data.session != '' &&
+			data.device_id &&
+			data.device_id != ''
+		) {
+			const userId = data.user_id;
+			const session = data.session;
+			const deviceId = data.device_id;
+			const checkuserLogin = await checkUserLogin(userId, session, deviceId);
+			if (!checkuserLogin) {
+				res.status(201).json({
+					data: { success: 0, days: [], error: 'Please login first' },
+				});
+			}
+		} else {
+			data.user_id = new mongoose.Types.ObjectId();
+		}
+		if (data.week_id) {
+			let week_id = data.week_id;
 			const result = await yogaworkoutDays.aggregate([
 				{
 					$match: { week_Id: new mongoose.Types.ObjectId(week_id) },
@@ -35,8 +57,24 @@ const getDay = async (req, res) => {
 					},
 				},
 			]);
+			let daysWithCompletionStatus = result;
+			if (data.user_id && data.user_id !== '' && result.length) {
+				// Check if the user has completed each day
+				daysWithCompletionStatus = await Promise.all(
+					result.map(async (day) => {
+						const dayCompleted = await yogaworkoutDaysCompleted.findOne({
+							days_id: day._id,
+							user_id: data.user_id,
+						});
+						return {
+							...day,
+							is_completed: dayCompleted ? 1 : 0,
+						};
+					})
+				);
+			}
 			res.status(200).json({
-				data: { success: 1, days: result, error: '' },
+				data: { success: 1, days: daysWithCompletionStatus, error: '' },
 			});
 		} else {
 			res.status(200).json({

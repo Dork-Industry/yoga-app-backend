@@ -38,7 +38,7 @@ const Login = async (req, res) => {
 			}
 		);
 	} catch (e) {
-		console.error(e);
+		// console.error(e);
 		res.status(500).json({
 			message: 'Server Error',
 		});

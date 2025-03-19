@@ -8,8 +8,9 @@ const settings = async (req, res) => {
 	try {
 		let settings = await yogaworkoutSetting.find().sort({ createdAt: -1 });
 		if (settings.length === 0) {
-			return res.status(400).json({
+			return res.status(200).json({
 				message: 'No Settings Added!',
+				settings:[]
 			});
 		} else {
 
@@ -55,7 +56,7 @@ const updateStretches = async (req, res) => {
 			}
 		);
 		if (!updatedStretches) {
-			return res.status(404).json({ error: 'Stretch not found' });
+			return res.status(404).json({ message: 'Stretch not found' });
 		}
 
 		res.json(updatedStretches);
@@ -97,7 +98,7 @@ const updateSettings = async (req, res) => {
 				{ new: true }
 			);
 			if (!updatedSettings) {
-				return res.status(404).json({ error: 'Settings not found' });
+				return res.status(404).json({ message: 'Settings not found' });
 			}
 
 

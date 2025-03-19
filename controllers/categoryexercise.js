@@ -24,15 +24,15 @@ const addCategoryexercises = async (req, res) => {
 		const { category_id, exercise_ids } = req.body;
 
 		if (!mongoose.Types.ObjectId.isValid(category_id)) {
-			return res.status(400).json({ error: 'Invalid Category ID' });
+			return res.status(400).json({ message: 'Invalid Category ID' });
 		}
 		if (!Array.isArray(exercise_ids) || exercise_ids.length === 0) {
 			return res
 				.status(400)
-				.json({ error: 'exercise_ids must be a non-empty array' });
+				.json({ message: 'exercise_ids must be a non-empty array' });
 		}
 		if (!exercise_ids.every(isValidObjectId)) {
-			return res.status(400).json({ error: 'Invalid Exercise ID format' });
+			return res.status(400).json({ message: 'Invalid Exercise ID format' });
 		}
 		const exercises = await yogaworkoutExercise.find({
 			_id: { $in: exercise_ids },
@@ -40,12 +40,12 @@ const addCategoryexercises = async (req, res) => {
 		if (exercises.length !== exercise_ids.length) {
 			return res
 				.status(400)
-				.json({ error: 'One or more Exercise IDs are invalid' });
+				.json({ message: 'One or more Exercise IDs are invalid' });
 		}
 
 		let category = await yogaworkoutCategory.findOne({ _id: category_id });
 		if (!category) {
-			return res.status(404).json({ error: 'Category not found' });
+			return res.status(404).json({ message: 'Category not found' });
 		}
 
 		const existingRecords = await yogaworkoutCategoryexercise.find({
@@ -92,7 +92,7 @@ const getExerciseByCategoryId = async (req, res) => {
 	try {
 		const category_Id = req.params.id;
 		if (!mongoose.Types.ObjectId.isValid(category_Id)) {
-			return res.status(400).json({ error: 'Invalid Category ID' });
+			return res.status(400).json({ message: 'Invalid Category ID' });
 		}
 
 		const categoryexercises = await yogaworkoutCategoryexercise
@@ -152,7 +152,7 @@ const deleteCategoryexercise = async (req, res) => {
 	const categoryexerciseId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(categoryexerciseId)) {
-		return res.status(400).json({ error: 'Invalid Categoryexercise ID' });
+		return res.status(400).json({ message: 'Invalid Categoryexercise ID' });
 	}
 
 	try {
@@ -163,7 +163,7 @@ const deleteCategoryexercise = async (req, res) => {
 		);
 
 		if (deletedCategoryexercise.deletedCount === 0) {
-			return res.status(404).json({ error: 'Categoryexercise not found' });
+			return res.status(404).json({ message: 'Categoryexercise not found' });
 		}
 
 		res.json({
@@ -172,7 +172,7 @@ const deleteCategoryexercise = async (req, res) => {
 		});
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Categoryexercise' });
+		res.status(500).json({ message: 'Failed to delete Categoryexercise' });
 	}
 };
 
@@ -199,7 +199,7 @@ const changeCategoryexerciseStatus = async (req, res) => {
 			);
 
 		if (!updatedCategoryexercise) {
-			return res.status(404).json({ error: 'Categoryexercise not found' });
+			return res.status(404).json({ message: 'Categoryexercise not found' });
 		}
 
 		res.json(updatedCategoryexercise);

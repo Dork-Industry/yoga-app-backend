@@ -3,30 +3,28 @@ const yogaworkoutDays = require('./days');
 
 const planSchema = new mongoose.Schema(
 	{
-
 		plan_name: {
 			type: String,
 			required: true,
 			index: true,
 		},
-
 		price: {
 			type: Number,
 			required: true,
-			default: 0.0
+			default: 0.0,
 		},
 		months: {
 			type: Number,
 			required: true,
-			default: 1
+			default: 1,
 		},
 		sku_id_android: {
 			type: String,
-			required: false
+			required: false,
 		},
 		sku_id_ios: {
 			type: String,
-			required: false
+			required: false,
 		},
 		createdAt: {
 			type: Date,
@@ -39,7 +37,5 @@ const planSchema = new mongoose.Schema(
 	},
 	{ timestamps: true, collection: 'yogaworkoutPlan' }
 );
-
-
 
 module.exports = mongoose.model('yogaworkoutPlan', planSchema);

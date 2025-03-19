@@ -16,8 +16,9 @@ const getAllQuickworkouts = async (req, res) => {
 			.find()
 			.sort({ createdAt: -1 });
 		if (quickworkouts.length === 0) {
-			return res.status(400).json({
+			return res.status(200).json({
 				message: 'No Quickworkout Added!',
+				quickworkouts:[]
 			});
 		} else {
 			const quickworkoutsWithImages = await Promise.all(
@@ -131,7 +132,7 @@ const updateQuickworkout = async (req, res) => {
 			}
 		);
 		if (!updatedQuickworkout) {
-			return res.status(404).json({ error: 'Quickworkout not found' });
+			return res.status(404).json({ message: 'Quickworkout not found' });
 		}
 
 		res.json(updatedQuickworkout);
@@ -147,7 +148,7 @@ const deleteQuickworkout = async (req, res) => {
 	const quickworkoutId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(quickworkoutId)) {
-		return res.status(400).json({ error: 'Invalid quickworkout ID' });
+		return res.status(400).json({ message: 'Invalid quickworkout ID' });
 	}
 
 	try {
@@ -158,7 +159,7 @@ const deleteQuickworkout = async (req, res) => {
 			});
 
 			if (deletedQuickworkout.deletedCount === 0) {
-				return res.status(404).json({ error: 'Quickworkout not found' });
+				return res.status(404).json({ message: 'Quickworkout not found' });
 			}
 			else {
 				if (documentExists.image) {
@@ -174,12 +175,12 @@ const deleteQuickworkout = async (req, res) => {
 			});
 		}
 		else {
-			res.status(500).json({ error: 'No document found to delete.' });
+			res.status(500).json({ message: 'No document found to delete.' });
 		}
 
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Quickworkout' });
+		res.status(500).json({ message: 'Failed to delete Quickworkout' });
 	}
 };
 
@@ -205,7 +206,7 @@ const changeQuickworkoutStatus = async (req, res) => {
 		);
 
 		if (!updatedQuickworkout) {
-			return res.status(404).json({ error: 'Quickworkout not found' });
+			return res.status(404).json({ message: 'Quickworkout not found' });
 		}
 
 		res.json(updatedQuickworkout);

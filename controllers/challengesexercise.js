@@ -24,15 +24,15 @@ const addChallengesexercises = async (req, res) => {
 		const { day_id, exercise_ids } = req.body;
 
 		if (!mongoose.Types.ObjectId.isValid(day_id)) {
-			return res.status(400).json({ error: 'Invalid Day ID' });
+			return res.status(400).json({ message: 'Invalid Day ID' });
 		}
 		if (!Array.isArray(exercise_ids) || exercise_ids.length === 0) {
 			return res
 				.status(400)
-				.json({ error: 'exercise_ids must be a non-empty array' });
+				.json({ message: 'exercise_ids must be a non-empty array' });
 		}
 		if (!exercise_ids.every(isValidObjectId)) {
-			return res.status(400).json({ error: 'Invalid Exercise ID format' });
+			return res.status(400).json({ message: 'Invalid Exercise ID format' });
 		}
 		const exercises = await yogaworkoutExercise.find({
 			_id: { $in: exercise_ids },
@@ -40,12 +40,12 @@ const addChallengesexercises = async (req, res) => {
 		if (exercises.length !== exercise_ids.length) {
 			return res
 				.status(400)
-				.json({ error: 'One or more Exercise IDs are invalid' });
+				.json({ message: 'One or more Exercise IDs are invalid' });
 		}
 
 		let day = await yogaworkoutDays.findOne({ _id: day_id });
 		if (!day) {
-			return res.status(404).json({ error: 'Day not found' });
+			return res.status(404).json({ message: 'Day not found' });
 		}
 
 		const existingRecords = await yogaworkoutChallengesexercise.find({
@@ -92,7 +92,7 @@ const getExerciseByDaysId = async (req, res) => {
 	try {
 		const day_Id = req.params.id;
 		if (!mongoose.Types.ObjectId.isValid(day_Id)) {
-			return res.status(400).json({ error: 'Invalid Day ID' });
+			return res.status(400).json({ message: 'Invalid Day ID' });
 		}
 
 		const challengesexercises = await yogaworkoutChallengesexercise
@@ -108,8 +108,9 @@ const getExerciseByDaysId = async (req, res) => {
 				select: '_id exerciseName description exerciseTime image',
 			});
 		if (challengesexercises.length === 0) {
-			return res.status(400).json({
+			return res.status(200).json({
 				message: 'No Challengesexercise Added!',
+				challengesexercises : []
 			});
 		} else {
 			const challengesexercisesWithImages = await Promise.all(
@@ -152,7 +153,7 @@ const deleteChallengesexercise = async (req, res) => {
 	const challengesexerciseId = req.params.id;
 
 	if (!mongoose.Types.ObjectId.isValid(challengesexerciseId)) {
-		return res.status(400).json({ error: 'Invalid Challengesexercise ID' });
+		return res.status(400).json({ message: 'Invalid Challengesexercise ID' });
 	}
 
 	try {
@@ -162,7 +163,7 @@ const deleteChallengesexercise = async (req, res) => {
 			});
 
 		if (deletedChallengesexercise.deletedCount === 0) {
-			return res.status(404).json({ error: 'Challengesexercise not found' });
+			return res.status(404).json({ message: 'Challengesexercise not found' });
 		}
 
 		res.json({
@@ -171,7 +172,7 @@ const deleteChallengesexercise = async (req, res) => {
 		});
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ error: 'Failed to delete Challengesexercise' });
+		res.status(500).json({ message: 'Failed to delete Challengesexercise' });
 	}
 };
 
@@ -198,7 +199,7 @@ const changeChallengesexerciseStatus = async (req, res) => {
 			);
 
 		if (!updatedChallengesexercise) {
-			return res.status(404).json({ error: 'Challengesexercise not found' });
+			return res.status(404).json({ message: 'Challengesexercise not found' });
 		}
 
 		res.json(updatedChallengesexercise);
