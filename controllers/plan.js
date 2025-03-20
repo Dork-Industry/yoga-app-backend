@@ -7,7 +7,7 @@ const getAllPlans = async (req, res) => {
 		if (Plans.length === 0) {
 			return res.status(200).json({
 				message: 'No Plans Added!',
-				plan : Plans
+				plan : []
 			});
 		} else {
 			res.status(200).json({
@@ -44,7 +44,7 @@ const addPlan = async (req, res) => {
 			sku_id_ios: sku_id_ios
 		});
 		await newPlan.save();
-		res.status(200).json({ message: 'New Plan Added successfully!' });
+		res.status(201).json({ message: 'New Plan Added successfully!' });
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
