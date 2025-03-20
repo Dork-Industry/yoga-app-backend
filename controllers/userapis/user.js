@@ -310,7 +310,7 @@ const login = async (req, res) => {
 					.select('-password -php_password');
 
 				if (Loginuser.length === 0) {
-					res.status(201).json({
+					res.status(400).json({
 						data: {
 							success: 0,
 							login: {
@@ -334,7 +334,7 @@ const login = async (req, res) => {
 					});
 				}
 			} else {
-				res.status(201).json({
+				res.status(400).json({
 					data: {
 						success: 0,
 						login: {
@@ -346,7 +346,7 @@ const login = async (req, res) => {
 				});
 			}
 		} else {
-			res.status(200).json({
+			res.status(400).json({
 				data: {
 					success: 0,
 					login: {
