@@ -309,14 +309,14 @@ const login = async (req, res) => {
 					})
 					.select('-password -php_password');
 
-				if (Loginuser.length === 0) {
+				if (!Loginuser) {
 					res.status(400).json({
 						data: {
 							success: 0,
 							login: {
 								userdetail: { '': '' },
 								session: '',
-								error: 'User not register',
+								error: 'Invalid username or password',
 							},
 						},
 					});
