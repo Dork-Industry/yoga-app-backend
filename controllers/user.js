@@ -7,11 +7,11 @@ const getAllUser = async (req, res) => {
 		if (Users.length === 0) {
 			return res.status(200).json({
 				message: 'No User Added!',
-				Users:[]
+				user:[]
 			});
 		} else {
 			res.status(200).json({
-				User: Users,
+				user: Users,
 			});
 		}
 	} catch (e) {
@@ -35,7 +35,7 @@ const changeUserStatus = async (req, res) => {
 		if (!updatedUser) {
 			return res.status(404).json({ message: 'User not found' });
 		}
-		return res.status(200).json({ message: 'User Status Updated Successfully!', user:updatedStretches });
+		return res.status(200).json({ message: 'User Status Updated Successfully!', user:updatedUser });
 	
 	} else {
 		res.status(500).send({
