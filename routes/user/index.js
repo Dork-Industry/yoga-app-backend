@@ -17,7 +17,7 @@ const weekCompletedController = require('../../controllers/userapis/weekcomplete
 const dayCompletedController = require('../../controllers/userapis/daycompleted');
 const workoutCompletedController = require('../../controllers/userapis/workoutcompleted');
 const planController = require('../../controllers/userapis/plan');
-const customplanController = require('../../controllers/userapis/customPlan')
+const customplanController = require('../../controllers/userapis/customPlan');
 
 //START : User Module
 router.post('/register', userController.register);
@@ -53,7 +53,8 @@ router.post(
 // END: challenges module
 
 // START: discover module
-router.get('/discover', discoverController.getAllDiscovers);
+router.post('/discover', discoverController.getAllDiscovers);
+router.post('/discoverexercise', discoverController.getDiscoverExercise);
 // END: discover module
 
 // START: quickworkout module
@@ -70,6 +71,7 @@ router.get('/settings', settingController.settings);
 
 // START: homeWorkout module
 router.post('/gethomeworkout', homeWorkoutController.getHomeWorkout);
+router.post('/homeworkout', homeWorkoutController.homeWorkout);
 // END: homeWorkout module
 
 // START: homeWorkout module
@@ -79,6 +81,7 @@ router.post('/cancelplan', planController.cancelPlan);
 
 // START: customplan module
 router.post('/getcustomplan', customplanController.getCustomPlan);
+router.post('/customplan', customplanController.addCustomPlan);
 
 // END: customplan module
 
