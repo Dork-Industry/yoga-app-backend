@@ -4,7 +4,7 @@ const yogaworkoutCustomPlan = require('../../models/customplan');
 const yogaworkoutCustomPlanExercise = require('../../models/customplanexercise');
 
 
-const getcustomplan = async (req, res) => {
+const getCustomPlan = async (req, res) => {
 	try {
 		const data = req.body;
 		if (
@@ -63,4 +63,4 @@ const getcustomplan = async (req, res) => {
 };
 
 
-module.exports = { getcustomplan };
+module.exports = { getCustomPlan };

@@ -17,6 +17,7 @@ const weekCompletedController = require('../../controllers/userapis/weekcomplete
 const dayCompletedController = require('../../controllers/userapis/daycompleted');
 const workoutCompletedController = require('../../controllers/userapis/workoutcompleted');
 const planController = require('../../controllers/userapis/plan');
+const customplanController = require('../../controllers/userapis/customPlan')
 
 //START : User Module
 router.post('/register', userController.register);
@@ -75,5 +76,10 @@ router.post('/gethomeworkout', homeWorkoutController.getHomeWorkout);
 router.post('/plan', planController.getPlan);
 router.post('/cancelplan', planController.cancelPlan);
 // END: homeWorkout module
+
+// START: customplan module
+router.post('/getcustomplan', customplanController.getCustomPlan);
+
+// END: customplan module
 
 module.exports = router;
