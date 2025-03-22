@@ -16,16 +16,6 @@ const quickworkoutexerciseSchema = new mongoose.Schema(
 			index: true,
 		},
 
-		// quickworkoutId: {
-		//     type: Number,
-		//     required: true
-		// },
-
-		// exerciseId: {
-		//     type: Number,
-		//     required: true
-		// },
-
 		isActive: {
 			type: Number,
 			enum: [0, 1],

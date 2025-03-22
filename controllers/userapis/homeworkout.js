@@ -60,35 +60,52 @@ const homeWorkout = async (req, res) => {
 				data.device_id
 			);
 			if (checkuserLogin) {
-				let customPlan = await yogaworkoutCustomPlan
-					.find({ user_id: data.user_id })
-					.sort({ createdAt: -1 });
-				if (customPlan.length === 0) {
-					return res.status(400).json({
-						data: { success: 0, homeworkout: [], error: 'Please Try Again' },
-					});
-				} else {
-					const customPlanWithExercise = await Promise.all(
-						customPlan.map(async (item) => {
-							const updatedItem = item.toObject ? item.toObject() : item;
-							let totalexercise = await yogaworkoutCustomPlanExercise.find({
-								custom_plan_id: item._id
-							});
-							return { ...updatedItem, totalexercise: totalexercise.length }; // Update the image URL
-
-							// return updatedItem; // Return the item unchanged if no image update is needed
+				if (data.workouts && data.workouts != '' && data.kcal && data.kcal != '' && data.duration && data.duration != '') {
+					const homeworkout = await yogaworkoutHomeWorkout.find({user_Id : data.user_id})
+					let updatedHomeWorkout;
+					if(homeworkout.length > 0)
+					{
+						updatedHomeWorkout = await yogaworkoutHomeWorkout.findOneAndUpdate({user_Id :data.user_id}, {workouts:data.workouts, kcal: data.kcal, duration: data.duration}, { new: true }).then(updatedData => {
+							return updatedData;
+						}).catch(err => {
+							console.log("Error updating homeWorkout : ", err)
+						}) 
+					}
+					else{
+						const newHomeWorkout = new  yogaworkoutHomeWorkout({
+							user_Id : data.data.user_id,
+							workouts:data.workouts, 
+							kcal: data.kcal, 
+							duration: data.duration
 						})
-					);
+						updatedHomeWorkout = await newHomeWorkout.save();
+					}
+
+					if(updatedHomeWorkout)
+					{
+						res.status(200).json({
+							data: { success: 1, homeworkout: updatedHomeWorkout, error: 'Home Workout Added Successfully' },
+						});	
+					}
+					else{
+						res.status(200).json({
+							data: { success: 0, homeworkout: [], error: 'Error in Adding HomeWorkout' },
+						});	
+					}
+				}
+				else {
 					res.status(200).json({
-						data: { success: 1, homeworkout: customPlanWithExercise, error: '' },
+						data: { success: 0, homeworkout: [], error: 'Variable not set' },
 					});
 				}
-			} else {
+			}
+			else {
 				res.status(201).json({
 					data: { success: 0, homeworkout: [], error: 'Please login first' },
 				});
 			}
-		} else {
+		}
+		else {
 			res.status(200).json({
 				data: { success: 1, homeworkout: [], error: 'Variable not set' },
 			});
@@ -104,4 +121,4 @@ const homeWorkout = async (req, res) => {
 module.exports = {
 	getHomeWorkout,
 	homeWorkout
-};
+}
