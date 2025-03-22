@@ -58,11 +58,13 @@ router.post('/discoverexercise', discoverController.getDiscoverExercise);
 // END: discover module
 
 // START: quickworkout module
-router.get('/quickworkout', quickworkoutController.getAllQuickworkouts);
+router.post('/quickworkout', quickworkoutController.getAllQuickworkouts);
+router.post('/quickworkoutexercise', quickworkoutController.getQuickworkoutExercise)
 // END: quickworkout module
 
 // START: stretches module
 router.post('/stretches', stretchesController.getAllStretches);
+router.post("/stretchesexercise", stretchesController.getStretchesExercise);
 // END: stretches module
 
 // START: settings module
