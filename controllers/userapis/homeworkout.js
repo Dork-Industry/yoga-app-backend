@@ -4,6 +4,7 @@ const { checkUserLogin } = require('./user');
 const getHomeWorkout = async (req, res) => {
 	try {
 		const data = req.body;
+
 		if (
 			data.user_id &&
 			data.user_id != '' &&
@@ -22,14 +23,27 @@ const getHomeWorkout = async (req, res) => {
 					data: { success: 0, homeworkout: [], error: 'Please login first' },
 				});
 			}
-			const result = await yogaworkoutHomeWorkout.aggregate([
+			// const result = await yogaworkoutHomeWorkout.aggregate([
+			// 	{
+			// 		$match: { user_Id: data.user_id },
+			// 	},
+			// ]);
+			const result = await yogaworkoutHomeWorkout.find(
 				{
-					$match: { userId: data.user_id },
+					user_Id: data.user_id,
 				},
-			]);
-			res.status(200).json({
-				data: { success: 1, homeworkout: result, error: '' },
-			});
+			);
+			if (result.length > 0) {
+				res.status(200).json({
+					data: { success: 1, homeworkout: result, error: '' },
+				});
+			}
+			else {
+				res.status(200).json({
+					data: { success: 0, homeworkout: [], error: 'No HomeWorkOut Found' },
+				});
+			}
+
 		} else {
 			res.status(200).json({
 				data: { success: 0, homeworkout: [], error: 'Variable not set' },
@@ -61,36 +75,34 @@ const homeWorkout = async (req, res) => {
 			);
 			if (checkuserLogin) {
 				if (data.workouts && data.workouts != '' && data.kcal && data.kcal != '' && data.duration && data.duration != '') {
-					const homeworkout = await yogaworkoutHomeWorkout.find({user_Id : data.user_id})
+					const homeworkout = await yogaworkoutHomeWorkout.find({ user_Id: data.user_id })
 					let updatedHomeWorkout;
-					if(homeworkout.length > 0)
-					{
-						updatedHomeWorkout = await yogaworkoutHomeWorkout.findOneAndUpdate({user_Id :data.user_id}, {workouts:data.workouts, kcal: data.kcal, duration: data.duration}, { new: true }).then(updatedData => {
+					if (homeworkout.length > 0) {
+						updatedHomeWorkout = await yogaworkoutHomeWorkout.findOneAndUpdate({ user_Id: data.user_id }, { workouts: data.workouts, kcal: data.kcal, duration: data.duration }, { new: true }).then(updatedData => {
 							return updatedData;
 						}).catch(err => {
 							console.log("Error updating homeWorkout : ", err)
-						}) 
+						})
 					}
-					else{
-						const newHomeWorkout = new  yogaworkoutHomeWorkout({
-							user_Id : data.data.user_id,
-							workouts:data.workouts, 
-							kcal: data.kcal, 
+					else {
+						const newHomeWorkout = new yogaworkoutHomeWorkout({
+							user_Id: data.user_id,
+							workouts: data.workouts,
+							kcal: data.kcal,
 							duration: data.duration
 						})
 						updatedHomeWorkout = await newHomeWorkout.save();
 					}
 
-					if(updatedHomeWorkout)
-					{
+					if (updatedHomeWorkout) {
 						res.status(200).json({
 							data: { success: 1, homeworkout: updatedHomeWorkout, error: 'Home Workout Added Successfully' },
-						});	
+						});
 					}
-					else{
+					else {
 						res.status(200).json({
 							data: { success: 0, homeworkout: [], error: 'Error in Adding HomeWorkout' },
-						});	
+						});
 					}
 				}
 				else {

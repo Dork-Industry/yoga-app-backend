@@ -2,13 +2,6 @@ const mongoose = require('mongoose');
 
 const homeworkoutSchema = new mongoose.Schema(
 	{
-		days_Id: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'yogaworkoutDays',
-			required: true,
-			index: true,
-		},
-
 		user_Id: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'yogaworkoutExercise',
@@ -27,16 +20,6 @@ const homeworkoutSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
-
-		// homeWorkoutId: {
-		//     type: Number,
-		//     required: true
-		// },
-
-		// userId: {
-		//     type:Number,
-		//     required: true
-		// },
 
 		createdAt: {
 			type: Date,
