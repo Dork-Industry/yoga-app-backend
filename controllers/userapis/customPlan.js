@@ -26,12 +26,12 @@ const getCustomPlan = async (req, res) => {
 					.sort({ createdAt: -1 });
 				if (customPlan.length === 0) {
 					return res.status(400).json({
-						data: { success: 0, customplan: [], error: 'Please Try Again' },
+						data: { success: 0, customplan: [], error: 'No Custome Plan Created' },
 					});
 				} else {
 					const customPlanWithExercise = await Promise.all(
 						customPlan.map(async (item) => {
-
+							const updatedItem = item.toObject ? item.toObject() : item;
 							let totalexercise = await yogaworkoutCustomPlanExercise.find({
 								custom_plan_id: item._id
 							});
@@ -88,7 +88,7 @@ const addCustomPlan = async (req, res) => {
 					const savedCustomPlan = await newCustomPlan.save();
 					if (savedCustomPlan) {
 						return res.status(200).json({
-							data: { success: 1, customplan: [], error: 'Add Custom Plan' },
+							data: { success: 1, customplan: [], error: 'Custom Plan added Successfully' },
 						});
 					} else {
 						

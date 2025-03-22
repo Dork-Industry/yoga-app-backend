@@ -70,7 +70,7 @@ const homeWorkout = async (req, res) => {
 				} else {
 					const customPlanWithExercise = await Promise.all(
 						customPlan.map(async (item) => {
-
+							const updatedItem = item.toObject ? item.toObject() : item;
 							let totalexercise = await yogaworkoutCustomPlanExercise.find({
 								custom_plan_id: item._id
 							});
