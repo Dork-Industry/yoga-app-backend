@@ -59,12 +59,15 @@ router.post('/discoverexercise', discoverController.getDiscoverExercise);
 
 // START: quickworkout module
 router.post('/quickworkout', quickworkoutController.getAllQuickworkouts);
-router.post('/quickworkoutexercise', quickworkoutController.getQuickworkoutExercise)
+router.post(
+	'/quickworkoutexercise',
+	quickworkoutController.getQuickworkoutExercise
+);
 // END: quickworkout module
 
 // START: stretches module
 router.post('/stretches', stretchesController.getAllStretches);
-router.post("/stretchesexercise", stretchesController.getStretchesExercise);
+router.post('/stretchesexercise', stretchesController.getStretchesExercise);
 // END: stretches module
 
 // START: settings module
@@ -76,10 +79,12 @@ router.post('/gethomeworkout', homeWorkoutController.getHomeWorkout);
 router.post('/homeworkout', homeWorkoutController.homeWorkout);
 // END: homeWorkout module
 
-// START: homeWorkout module
+// START: purchaseplan module
 router.post('/plan', planController.getPlan);
 router.post('/cancelplan', planController.cancelPlan);
-// END: homeWorkout module
+router.post('/checkpurchaseplanday', planController.checkPurchasePlanDay);
+router.post('/addpurchaseplan', planController.addPurchasePlan);
+// END: purchaseplan module
 
 // START: customplan module
 router.post('/getcustomplan', customplanController.getCustomPlan);

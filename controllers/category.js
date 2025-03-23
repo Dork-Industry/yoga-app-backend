@@ -16,7 +16,7 @@ const getAllCategories = async (req, res) => {
 		if (categories.length === 0) {
 			return res.status(200).json({
 				message: 'No Categories Added!',
-				categories : [],
+				categories: [],
 			});
 		} else {
 			const categoryWithImages = await Promise.all(
@@ -159,16 +159,17 @@ const deleteCategory = async (req, res) => {
 	}
 
 	try {
-		const documentExists = await yogaworkoutCategory.findOne({ _id: categoryId, });
+		const documentExists = await yogaworkoutCategory.findOne({
+			_id: categoryId,
+		});
 		if (documentExists) {
 			const deletedCategory = await yogaworkoutCategory.deleteOne({
 				_id: categoryId,
 			});
 			if (deletedCategory.deletedCount === 0) {
 				return res.status(404).json({ message: 'Category not found' });
-			}
-			else{
-				if(documentExists.image) {
+			} else {
+				if (documentExists.image) {
 					ImageToDelet = documentExists.image;
 					const imageRes = await deleteFile(ImageToDelet);
 					// console.log("imageRes", imageRes)
@@ -178,7 +179,6 @@ const deleteCategory = async (req, res) => {
 		} else {
 			res.status(500).json({ message: 'No document found to delete.' });
 		}
-		
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ message: 'Failed to delete Category' });

@@ -73,11 +73,6 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		// userId: {
-		// 	type: Number,
-		// 	required: true,
-		// 	unique: true,
-		// },
 		isActive: {
 			type: Number,
 			enum: [1, 0],

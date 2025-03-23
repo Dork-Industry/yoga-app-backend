@@ -15,15 +15,14 @@ const yogaworkoutWeekCompleted = require('../../models/weekcompleted');
 const getWeek = async (req, res) => {
 	try {
 		const data = req.body;
-		if (
-			data.user_id &&
-			data.user_id !== ''
-		) {
+		if (data.user_id && data.user_id !== '') {
 			const userId = data.user_id;
-			if (data.session &&
+			if (
+				data.session &&
 				data.session !== '' &&
 				data.device_id &&
-				data.device_id !== '') {
+				data.device_id !== ''
+			) {
 				const session = data.session;
 				const deviceId = data.device_id;
 				const checkuserLogin = await checkUserLogin(userId, session, deviceId);
@@ -31,13 +30,14 @@ const getWeek = async (req, res) => {
 					res.status(201).json({
 						data: { success: 0, days: [], error: 'Please login first' },
 					});
-				}
-				else {
+				} else {
 					if (data.challenges_id) {
 						let challenges_id = req.body.challenges_id;
 						const result = await yogaworkoutWeek.aggregate([
 							{
-								$match: { challenges_Id: new mongoose.Types.ObjectId(challenges_id) },
+								$match: {
+									challenges_Id: new mongoose.Types.ObjectId(challenges_id),
+								},
 							},
 							{
 								$lookup: {
@@ -82,20 +82,20 @@ const getWeek = async (req, res) => {
 						});
 					}
 				}
-			}
-			else {
+			} else {
 				res.status(200).json({
 					data: { success: 0, week: [], error: 'Variable not set' },
 				});
 			}
-
 		} else {
 			let user_id = 0;
 			if (data.challenges_id) {
 				let challenges_id = req.body.challenges_id;
 				const result = await yogaworkoutWeek.aggregate([
 					{
-						$match: { challenges_Id: new mongoose.Types.ObjectId(challenges_id) },
+						$match: {
+							challenges_Id: new mongoose.Types.ObjectId(challenges_id),
+						},
 					},
 					{
 						$lookup: {
@@ -126,7 +126,7 @@ const getWeek = async (req, res) => {
 						// });
 						return {
 							...week,
-							is_completed:  0,
+							is_completed: 0,
 						};
 					})
 				);
@@ -140,7 +140,6 @@ const getWeek = async (req, res) => {
 				});
 			}
 		}
-
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({

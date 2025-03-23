@@ -8,20 +8,13 @@ const sessionSchema = new mongoose.Schema(
 			required: true,
 			index: true,
 		},
-		// sessionId: {
-		// 	type: Number,
-		// 	required: true,
-		// 	unique: true,
-		// },
-		// userId: {
-		// 	type: Number,
-		// 	required: true,
-		// },
+
 		session: {
 			type: String,
 			required: true,
 			index: true,
 		},
+		
 		deviceId: {
 			type: String,
 			required: true,

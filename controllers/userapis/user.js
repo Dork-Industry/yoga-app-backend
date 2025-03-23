@@ -305,7 +305,6 @@ const login = async (req, res) => {
 					.findOne({
 						username: user.username,
 						password: encryptDecrypt.encrypt_decrypt('encrypt', user.password),
-						// device_id: user.device_id,
 					})
 					.select('-password -php_password');
 

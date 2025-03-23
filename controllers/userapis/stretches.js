@@ -108,10 +108,11 @@ const getAllStretches = async (req, res) => {
 const getStretchesExercise = async (req, res) => {
 	try {
 		if (req.body.stretches_id) {
-			
 			const stretchesexercises = await yogaworkoutStretchesexercise.aggregate([
 				{
-					$match: { stretches_Id: new mongoose.Types.ObjectId(req.body.stretches_id) },
+					$match: {
+						stretches_Id: new mongoose.Types.ObjectId(req.body.stretches_id),
+					},
 				},
 				{
 					$lookup: {
@@ -157,19 +158,17 @@ const getStretchesExercise = async (req, res) => {
 			res.status(200).json({
 				data: { success: 1, exercise: stretchesexercisesWithImages, error: '' },
 			});
-		}
-		else {
+		} else {
 			res.status(201).json({
 				data: { success: 0, exercise: [], error: 'Variable not set' },
 			});
 		}
-
 	} catch (e) {
 		console.error(e);
 		res.status(500).json({
 			data: { success: 0, exercise: [], error: 'Server Error' },
 		});
 	}
-}
+};
 
 module.exports = { getAllStretches, getStretchesExercise };

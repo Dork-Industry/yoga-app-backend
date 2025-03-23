@@ -2,10 +2,6 @@ const mongoose = require('mongoose');
 
 const purchasePlanSchema = new mongoose.Schema(
 	{
-		purchase_plan_id: {
-			type: Number,
-			required: true,
-		},
 		user_id: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'yogaworkoutUser',
