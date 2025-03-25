@@ -78,6 +78,18 @@ const userSchema = new mongoose.Schema(
 			enum: [1, 0],
 			default: 1,
 		},
+		otp: {
+			type: String
+		},
+		otpExpires: {
+			type: Date
+		},
+		resetPasswordToken: {
+			type: String
+		},
+		resetPasswordExpire: {
+			type: Date
+		},
 		createdAt: {
 			type: Date,
 			default: Date.now,

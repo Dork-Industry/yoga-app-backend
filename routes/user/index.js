@@ -24,6 +24,7 @@ router.post('/register', userController.register);
 router.post('/login', userController.login);
 router.post('/checkalreadyregister', userController.checkAlreadyRegister);
 router.post('/forgotpassword', userController.forgotPassword);
+router.post('/verifyotp', userController.verifyOTP);
 router.post('/changepassword', userController.changePassword);
 router.post('/updatepassword', userController.updatePassword);
 
