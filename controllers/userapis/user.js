@@ -497,8 +497,8 @@ const changePassword = async (req, res) => {
 		const userbody = req.body;
 
 		if (
-			userbody.mobile &&
-			userbody.mobile !== '' &&
+			userbody.email &&
+			userbody.email !== '' &&
 			userbody.newpassword &&
 			userbody.newpassword !== '' &&
 			userbody.resettoken &&
