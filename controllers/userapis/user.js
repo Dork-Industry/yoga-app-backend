@@ -3,6 +3,9 @@ const yogaworkoutUser = require('../../models/user');
 const yogaworkoutSession = require('../../models/session');
 const encryptDecrypt = require('../../utility/encryption'); // for encrypt and decrypt
 const crypto = require('crypto');
+const sendEmail = require('../../utility/email')
+const generateOTP = require('../../utility/generateOTP');
+const jwt = require('jsonwebtoken');
 
 const checkUserAlreadyRegister = async (userName, mobileNo) => {
 	const user = await yogaworkoutUser.find({
@@ -375,17 +378,50 @@ const forgotPassword = async (req, res) => {
 	try {
 		const userbody = req.body;
 
-		if (userbody.mobile && userbody.mobile !== '') {
+		if (userbody.email && userbody.email !== '') {
 			const user = await yogaworkoutUser.findOne({
-				mobile: userbody.mobile,
+				email: userbody.email,
 			});
 			if (user) {
-				return res.json({
-					data: {
-						success: 1,
-						forgotpassword: { error: 'Please check mobile for code' },
-					},
-				});
+				// Generate OTP
+				const otp = generateOTP();
+				const otpExpires = new Date(Date.now() + process.env.OTP_EXPIRE_MINUTES * 60 * 1000);
+
+				// Save OTP to user
+				user.otp = otp;
+				user.otpExpires = otpExpires;
+				await user.save({ validateBeforeSave: false });
+
+				// Send email with OTP
+				const message = `
+				<h2>Password Reset OTP</h2>
+				<p>Your OTP for password reset is: <strong>${otp}</strong></p>
+				<p>This OTP is valid for ${process.env.OTP_EXPIRE_MINUTES} minutes.</p>
+			  `;
+
+				try {
+					await sendEmail({
+						email: user.email,
+						subject: 'Password Reset OTP',
+						message
+					});
+
+					res.status(200).json({
+						success: true,
+						message: `OTP sent to ${user.email}`
+					});
+				} catch (error) {
+					console.log("error", error)
+					// Reset OTP if email fails
+					user.otp = undefined;
+					user.otpExpires = undefined;
+					await user.save({ validateBeforeSave: false });
+
+					return res.status(500).json({
+						success: false,
+						message: 'Email could not be sent'
+					});
+				}
 			} else {
 				return res.json({
 					data: { success: 0, forgotpassword: { error: 'Please try again' } },
@@ -404,6 +440,58 @@ const forgotPassword = async (req, res) => {
 	}
 };
 
+const verifyOTP = async (req, res) => {
+	try {
+		const { email, otp } = req.body;
+
+		// Find user
+		const user = await yogaworkoutUser.findOne({
+			email,
+			otpExpires: { $gt: Date.now() }
+		});
+
+		if (!user) {
+			return res.status(400).json({
+				success: false,
+				message: 'Invalid OTP or OTP has expired'
+			});
+		}
+
+		// Check if OTP matches
+		if (user.otp !== otp) {
+			return res.status(400).json({
+				success: false,
+				message: 'Invalid OTP'
+			});
+		}
+
+		// Generate reset token
+		const resetToken = jwt.sign(
+			{ id: user._id },
+			process.env.JWT_SECRET,
+			{ expiresIn: '10m' }
+		);
+
+		// Set reset token and expiry
+		user.resetPasswordToken = resetToken;
+		user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+		user.otp = undefined;
+		user.otpExpires = undefined;
+		await user.save({ validateBeforeSave: false });
+
+		res.status(200).json({
+			success: true,
+			token: resetToken,
+			message: 'OTP verified successfully'
+		});
+
+	} catch (e) {
+		res.status(500).json({
+			data: { success: 0, forgotpassword: { error: 'Server Error' } },
+		});
+	}
+}
+
 const changePassword = async (req, res) => {
 	try {
 		const userbody = req.body;
@@ -412,11 +500,21 @@ const changePassword = async (req, res) => {
 			userbody.mobile &&
 			userbody.mobile !== '' &&
 			userbody.newpassword &&
-			userbody.newpassword !== ''
+			userbody.newpassword !== '' &&
+			userbody.resettoken &&
+			userbody.resettoken != ''
 		) {
+
+			// Verify token
+			const decoded = jwt.verify(userbody.resettoken, process.env.JWT_SECRET);
+
+			// Find user
 			const user = await yogaworkoutUser.findOne({
-				mobile: userbody.mobile,
+				_id: decoded.id,
+				resetPasswordToken : userbody.resettoken,
+				resetPasswordExpire: { $gt: Date.now() }
 			});
+
 			if (user) {
 				// Hash the new password
 				const hashedPassword = encryptDecrypt.encrypt_decrypt(
@@ -426,7 +524,7 @@ const changePassword = async (req, res) => {
 				// Update the password in the database
 				const result = await yogaworkoutUser.updateOne(
 					{ _id: new mongoose.Types.ObjectId(user._id) },
-					{ $set: { password: hashedPassword } },
+					{ $set: { password: hashedPassword, resetPasswordToken : undefined,resetPasswordExpire: undefined } },
 					{ new: true } // Return the updated document
 				);
 
@@ -548,4 +646,5 @@ module.exports = {
 	forgotPassword,
 	changePassword,
 	updatePassword,
+	verifyOTP
 };
