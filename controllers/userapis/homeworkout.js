@@ -109,11 +109,11 @@ const homeWorkout = async (req, res) => {
 						updatedHomeWorkout = await newHomeWorkout.save();
 					}
 
-					if (updatedHomeWorkout) {
+					if (updatedHomeWorkout.length >0) {
 						res.status(200).json({
 							data: {
 								success: 1,
-								homeworkout: updatedHomeWorkout,
+								homeworkout: updatedHomeWorkout[0],
 								error: 'Home Workout Added Successfully',
 							},
 						});
@@ -121,7 +121,7 @@ const homeWorkout = async (req, res) => {
 						res.status(200).json({
 							data: {
 								success: 0,
-								homeworkout: [],
+								homeworkout: {},
 								error: 'Error in Adding HomeWorkout',
 							},
 						});
