@@ -13,10 +13,7 @@ const categorySchema = new mongoose.Schema(
 		description: {
 			type: String,
 		},
-		// categoryId:{
-		//     type: Number,
-		//     unique: true
-		// },
+
 		isActive: {
 			type: Number,
 			enum: [1, 0],

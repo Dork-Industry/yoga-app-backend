@@ -34,6 +34,7 @@ const workoutCompleted = async (req, res) => {
 					const date_years = data.completed_date.split('-');
 					const date_year = date_years[1] + '-' + date_years[0];
 					const newWorkoutCompleted = new yogaworkoutworkoutCompleted({
+						user_id:data.user_id,
 						workout_type: data.workout_type,
 						workout_id: data.workout_id,
 						kcal: data.kcal,
