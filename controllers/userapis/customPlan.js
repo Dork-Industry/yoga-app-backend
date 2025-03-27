@@ -130,4 +130,129 @@ const addCustomPlan = async (req, res) => {
 	}
 };
 
-module.exports = { getCustomPlan, addCustomPlan };
+const deleteCustomPlan = async (req, res) => {
+	try {
+		const data = req.body;
+		if (
+			data.user_id &&
+			data.user_id != '' &&
+			data.session &&
+			data.session != '' &&
+			data.device_id &&
+			data.device_id != ''
+		) {
+			const checkuserLogin = await checkUserLogin(
+				data.user_id,
+				data.session,
+				data.device_id
+			);
+			if (checkuserLogin) {
+				if (
+					data.custom_plan_id &&
+					data.custom_plan_id != ''
+				) {
+					const deletedCustomPlan = await yogaworkoutCustomPlan.findOneAndDelete({_id : data.custom_plan_id, user_id : data.user_id});
+					if (deletedCustomPlan) {
+						return res.status(200).json({
+							data: {
+								success: 1,
+								customplan: [],
+								error: 'Custom Plan deleted Successfully',
+							},
+						});
+					} else {
+						res.status(400).json({
+							data: { success: 0, customplan: [], error: 'Please Try Again' },
+						});
+					}
+				} else {
+					res.status(200).json({
+						data: { success: 0, customplan: [], error: 'Variable not set' },
+					});
+				}
+			} else {
+				res.status(201).json({
+					data: { success: 0, customplan: [], error: 'Please login first' },
+				});
+			}
+		} else {
+			res.status(200).json({
+				data: { success: 0, customplan: [], error: 'Variable not set' },
+			});
+		}
+	} catch (e) {
+		console.error(e);
+		res.status(500).json({
+			data: { success: 0, customplan: [], error: 'Server Error' },
+		});
+	}
+}
+
+const editCustomPlan = async(req,res) => {
+	try {
+		const data = req.body;
+		if (
+			data.user_id &&
+			data.user_id != '' &&
+			data.session &&
+			data.session != '' &&
+			data.device_id &&
+			data.device_id != ''
+		) {
+			const checkuserLogin = await checkUserLogin(
+				data.user_id,
+				data.session,
+				data.device_id
+			);
+			if (checkuserLogin) {
+				if (
+					data.custom_plan_id &&
+					data.custom_plan_id != '' &&
+					data.name &&
+					data.name != '' &&
+					data.description &&
+					data.description !=''
+				) {
+					const updatedCustomPlan = await yogaworkoutCustomPlan.findByIdAndUpdate(
+						data.custom_plan_id,
+						{ $set: { name: data.name, description : data.description } },
+						{ new: true } // return the updated document
+					  );
+					
+					if (updatedCustomPlan) {
+						return res.status(200).json({
+							data: {
+								success: 1,
+								customplan: [],
+								error: 'Custom Plan Updated Successfully',
+							},
+						});
+					} else {
+						res.status(400).json({
+							data: { success: 0, customplan: [], error: 'Please Try Again' },
+						});
+					}
+				} else {
+					res.status(200).json({
+						data: { success: 0, customplan: [], error: 'Variable not set' },
+					});
+				}
+			} else {
+				res.status(201).json({
+					data: { success: 0, customplan: [], error: 'Please login first' },
+				});
+			}
+		} else {
+			res.status(200).json({
+				data: { success: 0, customplan: [], error: 'Variable not set' },
+			});
+		}
+	} catch (e) {
+		console.error(e);
+		res.status(500).json({
+			data: { success: 0, customplan: [], error: 'Server Error' },
+		});
+	}
+}
+
+module.exports = { getCustomPlan, addCustomPlan, deleteCustomPlan, editCustomPlan };

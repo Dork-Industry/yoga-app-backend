@@ -91,6 +91,8 @@ router.post('/addpurchaseplan', planController.addPurchasePlan);
 // START: customplan module
 router.post('/getcustomplan', customplanController.getCustomPlan);
 router.post('/customplan', customplanController.addCustomPlan);
+router.post('/deletecustomplan', customplanController.deleteCustomPlan);
+router.post('/editcustomplan', customplanController.editCustomPlan);
 // END: customplan module
 
 // START: customplanexercise module
