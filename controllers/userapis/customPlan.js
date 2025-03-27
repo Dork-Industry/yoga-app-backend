@@ -3,7 +3,6 @@ const { checkUserLogin } = require('./user');
 const yogaworkoutCustomPlan = require('../../models/customplan');
 const yogaworkoutCustomPlanExercise = require('../../models/customplanexercise');
 
-
 const getCustomPlan = async (req, res) => {
 	try {
 		const data = req.body;
@@ -26,14 +25,18 @@ const getCustomPlan = async (req, res) => {
 					.sort({ createdAt: -1 });
 				if (customPlan.length === 0) {
 					return res.status(400).json({
-						data: { success: 0, customplan: [], error: 'No Custome Plan Created' },
+						data: {
+							success: 0,
+							customplan: [],
+							error: 'No Custome Plan Created',
+						},
 					});
 				} else {
 					const customPlanWithExercise = await Promise.all(
 						customPlan.map(async (item) => {
 							const updatedItem = item.toObject ? item.toObject() : item;
 							let totalexercise = await yogaworkoutCustomPlanExercise.find({
-								custom_plan_id: item._id
+								custom_plan_id: item._id,
 							});
 							return { ...updatedItem, totalexercise: totalexercise.length }; // Update the image URL
 
@@ -79,30 +82,36 @@ const addCustomPlan = async (req, res) => {
 				data.device_id
 			);
 			if (checkuserLogin) {
-				if (data.name && data.name != '' && data.description && data.description != '') {
+				if (
+					data.name &&
+					data.name != '' &&
+					data.description &&
+					data.description != ''
+				) {
 					let newCustomPlan = new yogaworkoutCustomPlan({
-						user_id : data.user_id,
+						user_id: data.user_id,
 						name: data.name,
-						description : data.description
-					})
+						description: data.description,
+					});
 					const savedCustomPlan = await newCustomPlan.save();
 					if (savedCustomPlan) {
 						return res.status(200).json({
-							data: { success: 1, customplan: [], error: 'Custom Plan added Successfully' },
+							data: {
+								success: 1,
+								customplan: [],
+								error: 'Custom Plan added Successfully',
+							},
 						});
 					} else {
-						
 						res.status(400).json({
 							data: { success: 0, customplan: [], error: 'Please Try Again' },
 						});
 					}
-				}
-				else {
+				} else {
 					res.status(200).json({
 						data: { success: 0, customplan: [], error: 'Variable not set' },
 					});
 				}
-
 			} else {
 				res.status(201).json({
 					data: { success: 0, customplan: [], error: 'Please login first' },
@@ -119,7 +128,6 @@ const addCustomPlan = async (req, res) => {
 			data: { success: 0, customplan: [], error: 'Server Error' },
 		});
 	}
-}
-
+};
 
 module.exports = { getCustomPlan, addCustomPlan };

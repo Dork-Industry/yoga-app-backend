@@ -23,7 +23,7 @@ const getPlan = async (req, res) => {
 			);
 			if (checkuserLogin) {
 				let plan = await yogaworkoutPlan
-					.find({ isActive: 1 })
+					.find()
 					.sort({ createdAt: -1 });
 				if (plan.length === 0) {
 					return res.status(400).json({

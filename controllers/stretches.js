@@ -198,7 +198,7 @@ const changeStretchesStatus = async (req, res) => {
 	if (mongoose.Types.ObjectId.isValid(stretchesId)) {
 		const updatedStretches = await yogaworkoutStretches.findOneAndUpdate(
 			{ _id: stretchesId },
-			{ $set: { isActive: stretchesStatus } },
+			{ $set: { isPro: stretchesStatus } },
 			{ returnDocument: 'after' }
 		);
 		// console.log('updatedStretches', updatedStretches);

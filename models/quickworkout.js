@@ -13,11 +13,14 @@ const quickworkoutSchema = new mongoose.Schema(
 		description: {
 			type: String,
 		},
-		// quickworkoutId:{
-		//     type: Number,
-		//     unique: true
-		// },
+		
 		isActive: {
+			type: Number,
+			enum: [1, 0],
+			default: 1,
+		},
+
+		isPro: {
 			type: Number,
 			enum: [1, 0],
 			default: 1,

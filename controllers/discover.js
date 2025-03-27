@@ -192,12 +192,12 @@ const changeDiscoverStatus = async (req, res) => {
 	let discoverId = req.body.id.toString();
 	let discoverStatus = req.body.status;
 
-	console.log('req.body', req.body);
+	// console.log('req.body', req.body);
 
 	if (mongoose.Types.ObjectId.isValid(discoverId)) {
 		const updatedDiscover = await yogaworkoutDiscover.findOneAndUpdate(
 			{ _id: discoverId },
-			{ $set: { isActive: discoverStatus } },
+			{ $set: { isPro: discoverStatus } },
 			{ returnDocument: 'after' }
 		);
 		// console.log('updatedDiscover', updatedDiscover);

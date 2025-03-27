@@ -13,11 +13,13 @@ const stretchesSchema = new mongoose.Schema(
 		description: {
 			type: String,
 		},
-		// stretchesId:{
-		//     type: Number,
-		//     unique: true
-		// },
+
 		isActive: {
+			type: Number,
+			enum: [1, 0],
+			default: 1,
+		},
+		isPro: {
 			type: Number,
 			enum: [1, 0],
 			default: 1,

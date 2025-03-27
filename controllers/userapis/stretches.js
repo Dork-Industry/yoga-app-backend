@@ -19,7 +19,7 @@ const getAllStretches = async (req, res) => {
 				const deviceId = data.device_id;
 				const checkuserLogin = await checkUserLogin(userId, session, deviceId);
 				if (!checkuserLogin) {
-					res.status(201).json({
+					return res.status(201).json({
 						data: { success: 0, stretches: [], error: 'Please login first' },
 					});
 				} else {

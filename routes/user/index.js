@@ -18,6 +18,7 @@ const dayCompletedController = require('../../controllers/userapis/daycompleted'
 const workoutCompletedController = require('../../controllers/userapis/workoutcompleted');
 const planController = require('../../controllers/userapis/plan');
 const customplanController = require('../../controllers/userapis/customPlan');
+const customplanexerciseController = require('../../controllers/userapis/customplanexercise');
 
 //START : User Module
 router.post('/register', userController.register);
@@ -27,6 +28,7 @@ router.post('/forgotpassword', userController.forgotPassword);
 router.post('/verifyotp', userController.verifyOTP);
 router.post('/changepassword', userController.changePassword);
 router.post('/updatepassword', userController.updatePassword);
+//END : User Module
 
 // START: exercise module
 router.get('/exercise', exerciseController.getAllExercise);
@@ -45,7 +47,6 @@ router.post('/challenges', challengesController.getAllChallenges);
 router.post('/getweek', weekController.getWeek);
 router.post('/weekcompleted', weekCompletedController.weekCompleted);
 router.post('/daycompleted', dayCompletedController.dayCompleted);
-router.post('/workoutcompleted', workoutCompletedController.workoutCompleted);
 router.post('/getdays', dayController.getDay);
 router.post(
 	'/challengesexercise',
@@ -90,7 +91,33 @@ router.post('/addpurchaseplan', planController.addPurchasePlan);
 // START: customplan module
 router.post('/getcustomplan', customplanController.getCustomPlan);
 router.post('/customplan', customplanController.addCustomPlan);
-
 // END: customplan module
+
+// START: customplanexercise module
+router.post(
+	'/getcustomplanexercise',
+	customplanexerciseController.getCustomPlanExercise
+);
+router.post(
+	'/customplanexercise',
+	customplanexerciseController.customPlanExercise
+);
+router.post(
+	'/editcustomplanexercise',
+	customplanexerciseController.editCustomPlanExercise
+);
+router.post(
+	'/deletecustomplanexercise',
+	customplanexerciseController.deleteCustomPlanExercise
+)
+// END: customplanexercise module
+
+// START: workoutscompleted module
+router.post('/workoutcompleted', workoutCompletedController.workoutCompleted);
+router.post(
+	'/getworkoutcompleted',
+	workoutCompletedController.getWorkoutCompleted
+);
+// END: workoutscompleted module
 
 module.exports = router;

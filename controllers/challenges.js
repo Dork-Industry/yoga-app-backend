@@ -144,12 +144,12 @@ const changeChallengesStatus = async (req, res) => {
 	let challengesId = req.body.id.toString();
 	let challengesStatus = req.body.status;
 
-	console.log('req.body', req.body);
+	// console.log('req.body', req.body);
 
 	if (mongoose.Types.ObjectId.isValid(challengesId)) {
 		const updatedChallenges = await yogaworkoutChallenges.findOneAndUpdate(
 			{ _id: challengesId },
-			{ $set: { isActive: challengesStatus } },
+			{ $set: { isPro: challengesStatus } },
 			{ returnDocument: 'after' }
 		);
 		// console.log('updatedChallenges', updatedChallenges);

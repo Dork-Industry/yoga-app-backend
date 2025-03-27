@@ -17,8 +17,9 @@ const customplanexerciseSchema = new mongoose.Schema(
 		},
 
 		exercise_time: {
-			type: String,
+			type: Number,
 			required: true,
+			default: 1,
 		},
 
 		isActive: {

@@ -23,6 +23,11 @@ const challengesSchema = new mongoose.Schema(
 			enum: [0, 1],
 			default: 1,
 		},
+		isPro: {
+			type: Number,
+			enum: [0, 1],
+			default: 1,
+		},
 		createdAt: {
 			type: Date,
 			default: Date.now,

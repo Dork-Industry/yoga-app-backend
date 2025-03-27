@@ -204,7 +204,7 @@ const changeCategoryStatus = async (req, res) => {
 	if (mongoose.Types.ObjectId.isValid(categoryId)) {
 		const updatedCategory = await yogaworkoutCategory.findOneAndUpdate(
 			{ _id: categoryId },
-			{ $set: { isActive: categoryStatus } },
+			{ $set: { isPro: categoryStatus } },
 			{ returnDocument: 'after' }
 		);
 		// console.log('updatedCategory', updatedCategory);

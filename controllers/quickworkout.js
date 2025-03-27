@@ -201,7 +201,7 @@ const changeQuickworkoutStatus = async (req, res) => {
 	if (mongoose.Types.ObjectId.isValid(quickworkoutId)) {
 		const updatedQuickworkout = await yogaworkoutQuickworkout.findOneAndUpdate(
 			{ _id: quickworkoutId },
-			{ $set: { isActive: quickworkoutStatus } },
+			{ $set: { isPro: quickworkoutStatus } },
 			{ returnDocument: 'after' }
 		);
 
