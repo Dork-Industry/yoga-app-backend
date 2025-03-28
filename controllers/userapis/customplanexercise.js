@@ -81,7 +81,7 @@ const getCustomPlanExercise = async (req, res) => {
 				if (customplanexercise) {
 					return res.status(200).json({
 						data: {
-							success: 0,
+							success: 1,
 							customplanexercise: customplanexercise,
 							error: '',
 						},
