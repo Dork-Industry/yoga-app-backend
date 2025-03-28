@@ -131,7 +131,7 @@ const getWorkoutCompleted = async (req, res) => {
 			if (workoutcompleted) {
 				res.status(201).json({
 					data: {
-						success: 0,
+						success: 1,
 						workoutscompleted: workoutcompleted,
 						error: '',
 					},
