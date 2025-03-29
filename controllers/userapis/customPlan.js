@@ -147,11 +147,12 @@ const deleteCustomPlan = async (req, res) => {
 				data.device_id
 			);
 			if (checkuserLogin) {
-				if (
-					data.custom_plan_id &&
-					data.custom_plan_id != ''
-				) {
-					const deletedCustomPlan = await yogaworkoutCustomPlan.findOneAndDelete({_id : data.custom_plan_id, user_id : data.user_id});
+				if (data.custom_plan_id && data.custom_plan_id != '') {
+					const deletedCustomPlan =
+						await yogaworkoutCustomPlan.findOneAndDelete({
+							_id: data.custom_plan_id,
+							user_id: data.user_id,
+						});
 					if (deletedCustomPlan) {
 						return res.status(200).json({
 							data: {
@@ -186,9 +187,9 @@ const deleteCustomPlan = async (req, res) => {
 			data: { success: 0, customplan: [], error: 'Server Error' },
 		});
 	}
-}
+};
 
-const editCustomPlan = async(req,res) => {
+const editCustomPlan = async (req, res) => {
 	try {
 		const data = req.body;
 		if (
@@ -211,19 +212,20 @@ const editCustomPlan = async(req,res) => {
 					data.name &&
 					data.name != '' &&
 					data.description &&
-					data.description !=''
+					data.description != ''
 				) {
-					const updatedCustomPlan = await yogaworkoutCustomPlan.findByIdAndUpdate(
-						data.custom_plan_id,
-						{ $set: { name: data.name, description : data.description } },
-						{ new: true } // return the updated document
-					  );
-					
+					const updatedCustomPlan =
+						await yogaworkoutCustomPlan.findByIdAndUpdate(
+							data.custom_plan_id,
+							{ $set: { name: data.name, description: data.description } },
+							{ new: true } // return the updated document
+						);
+
 					if (updatedCustomPlan) {
 						return res.status(200).json({
 							data: {
 								success: 1,
-								customplan: [],
+								customplan: updatedCustomPlan,
 								error: 'Custom Plan Updated Successfully',
 							},
 						});
@@ -253,6 +255,11 @@ const editCustomPlan = async(req,res) => {
 			data: { success: 0, customplan: [], error: 'Server Error' },
 		});
 	}
-}
+};
 
-module.exports = { getCustomPlan, addCustomPlan, deleteCustomPlan, editCustomPlan };
+module.exports = {
+	getCustomPlan,
+	addCustomPlan,
+	deleteCustomPlan,
+	editCustomPlan,
+};

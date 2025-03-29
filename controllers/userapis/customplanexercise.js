@@ -226,8 +226,41 @@ const editCustomPlanExercise = async (req, res) => {
 				return res.status(201).json({
 					data: {
 						success: 0,
-						editcustomplanexercise: [],
+						editcustomplanExercise: [],
 						error: 'Please login first',
+					},
+				});
+			}
+			const time = new Date(); // Using current time for created_at and updated_at
+
+			const updatedCustomPlanExercise =
+				await yogaworkoutCustomPlanExercise.findByIdAndUpdate(
+					data.custom_plan_exercise_id,
+					{
+						$set: {
+							custom_plan_id: data.custom_plan_id,
+							exercise_id: data.exercise_id,
+							exercise_time: data.exercise_time,
+							updated_at: time,
+						},
+					},
+					{ new: true } // return the updated document
+				);
+
+			if (updatedCustomPlanExercise) {
+				return res.status(200).json({
+					data: {
+						success: 1,
+						editcustomplanexercise: updatedCustomPlanExercise,
+						error: 'Custom Plan Exercise Updated Successfully',
+					},
+				});
+			} else {
+				res.status(400).json({
+					data: {
+						success: 0,
+						editcustomplanexercise: [],
+						error: 'Please Try Again',
 					},
 				});
 			}
@@ -264,6 +297,28 @@ const deleteCustomPlanExercise = async (req, res) => {
 						success: 0,
 						deletecustomplanexercise: [],
 						error: 'Please login first',
+					},
+				});
+			}
+
+			const deletedCustomPlanExercise =
+				await yogaworkoutCustomPlanExercise.findOneAndDelete({
+					_id: data.custom_plan_exercise_id,
+				});
+			if (deletedCustomPlanExercise) {
+				return res.status(200).json({
+					data: {
+						success: 1,
+						deletecustomplanexercise: [],
+						error: 'Custom Plan Exercise deleted Successfully',
+					},
+				});
+			} else {
+				res.status(400).json({
+					data: {
+						success: 0,
+						deletecustomplanexercise: [],
+						error: 'Please Try Again',
 					},
 				});
 			}
