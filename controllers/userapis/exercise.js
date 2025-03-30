@@ -3,7 +3,7 @@ const { getFile } = require('../../utility/s3');
 
 const getAllExercise = async (req, res) => {
 	try {
-		let exercises = await yogaworkoutExercise.find().sort({ createdAt: -1 });
+		let exercises = await yogaworkoutExercise.find({ isActive: 1 }).sort({ createdAt: -1 });
 		if (exercises.length === 0) {
 			return res.status(400).json({
 				data: { success: 0, exercises: [], error: 'Please Try Again' },
