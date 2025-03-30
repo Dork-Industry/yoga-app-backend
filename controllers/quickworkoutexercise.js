@@ -114,22 +114,22 @@ const getExerciseByQuickworkoutId = async (req, res) => {
 				message: 'No Quickworkoutexercise Added!',
 			});
 		} else {
-			const quickworkoutexercisesWithImages = await Promise.all(
-				quickworkoutexercises.map(async (item) => {
-					const updatedItem = item.toObject ? item.toObject() : item;
-					if (item.exercise_Id?.image !== '') {
-						const imageurl = await s3.getFile(item.exercise_Id?.image); // Assuming getFile is an async function
-						// console.log("imageurl", imageurl);
-						return {
-							...updatedItem,
-							exercise_Id: { ...updatedItem.exercise_Id, image: imageurl },
-						}; // Update the image URL
-					}
-					return updatedItem; // Return the item unchanged if no image update is needed
-				})
-			);
+			// const quickworkoutexercisesWithImages = await Promise.all(
+			// 	quickworkoutexercises.map(async (item) => {
+			// 		const updatedItem = item.toObject ? item.toObject() : item;
+			// 		if (item.exercise_Id?.image !== '') {
+			// 			const imageurl = await s3.getFile(item.exercise_Id?.image); // Assuming getFile is an async function
+			// 			// console.log("imageurl", imageurl);
+			// 			return {
+			// 				...updatedItem,
+			// 				exercise_Id: { ...updatedItem.exercise_Id, image: imageurl },
+			// 			}; // Update the image URL
+			// 		}
+			// 		return updatedItem; // Return the item unchanged if no image update is needed
+			// 	})
+			// );
 			res.status(200).json({
-				quickworkoutexercises: quickworkoutexercisesWithImages,
+				quickworkoutexercises: quickworkoutexercises,
 			});
 		}
 	} catch (e) {
