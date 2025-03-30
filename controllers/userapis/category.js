@@ -9,19 +9,19 @@ const getAllCategories = async (req, res) => {
 				data: { success: 0, category: [], error: 'Please Try Again' },
 			});
 		} else {
-			const categoryWithImages = await Promise.all(
-				categories.map(async (item) => {
-					const updatedItem = item.toObject ? item.toObject() : item;
-					if (item.image !== '') {
-						const imageurl = await getFile(item.image); // Assuming getFile is an async function
-						// console.log("imageurl", imageurl);
-						return { ...updatedItem, image: imageurl }; // Update the image URL
-					}
-					return updatedItem; // Return the item unchanged if no image update is needed
-				})
-			);
+			// const categoryWithImages = await Promise.all(
+			// 	categories.map(async (item) => {
+			// 		const updatedItem = item.toObject ? item.toObject() : item;
+			// 		if (item.image !== '') {
+			// 			const imageurl = await getFile(item.image); // Assuming getFile is an async function
+			// 			// console.log("imageurl", imageurl);
+			// 			return { ...updatedItem, image: imageurl }; // Update the image URL
+			// 		}
+			// 		return updatedItem; // Return the item unchanged if no image update is needed
+			// 	})
+			// );
 			res.status(200).json({
-				data: { success: 1, category: categoryWithImages, error: '' },
+				data: { success: 1, category: categories, error: '' },
 			});
 		}
 	} catch (e) {

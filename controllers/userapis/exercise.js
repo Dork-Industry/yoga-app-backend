@@ -9,20 +9,20 @@ const getAllExercise = async (req, res) => {
 				data: { success: 0, exercises: [], error: 'Please Try Again' },
 			});
 		} else {
-			const exercisesWithImages = await Promise.all(
-				exercises.map(async (item) => {
-					const updatedItem = item.toObject ? item.toObject() : item;
-					if (item.image !== '') {
-						const imageurl = await s3.getFile(item.image); // Assuming getFile is an async function
-						// console.log("imageurl", imageurl);
-						return { ...updatedItem, image: imageurl }; // Update the image URL
-					}
-					return updatedItem; // Return the item unchanged if no image update is needed
-				})
-			);
+			// const exercisesWithImages = await Promise.all(
+			// 	exercises.map(async (item) => {
+			// 		const updatedItem = item.toObject ? item.toObject() : item;
+			// 		if (item.image !== '') {
+			// 			const imageurl = await s3.getFile(item.image); // Assuming getFile is an async function
+			// 			// console.log("imageurl", imageurl);
+			// 			return { ...updatedItem, image: imageurl }; // Update the image URL
+			// 		}
+			// 		return updatedItem; // Return the item unchanged if no image update is needed
+			// 	})
+			// );
 
 			res.status(200).json({
-				data: { success: 1, exercises: exercisesWithImages, error: '' },
+				data: { success: 1, exercises: exercises, error: '' },
 			});
 		}
 	} catch (e) {

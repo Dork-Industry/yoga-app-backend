@@ -39,13 +39,13 @@ const getAllStretches = async (req, res) => {
 									stretches_Id: item._id,
 								});
 
-								if (item.image !== '') {
-									imageUrl = await getFile(item.image); // Assuming getFile is an async function
-									// console.log("imageurl", imageurl);
-								}
+								// if (item.image !== '') {
+								// 	imageUrl = await getFile(item.image); // Assuming getFile is an async function
+								// 	// console.log("imageurl", imageurl);
+								// }
 								return {
 									...updatedItem,
-									image: imageUrl,
+									// image: imageUrl,
 									totalexercise: totalexercise.length,
 								}; // Update the image URL
 
@@ -79,13 +79,13 @@ const getAllStretches = async (req, res) => {
 							stretches_Id: item._id,
 						});
 
-						if (item.image !== '') {
-							imageUrl = await getFile(item.image); // Assuming getFile is an async function
-							// console.log("imageurl", imageurl);
-						}
+						// if (item.image !== '') {
+						// 	imageUrl = await getFile(item.image); // Assuming getFile is an async function
+						// 	// console.log("imageurl", imageurl);
+						// }
 						return {
 							...updatedItem,
-							image: imageUrl,
+							// image: imageUrl,
 							totalexercise: totalexercise.length,
 						}; // Update the image URL
 
@@ -141,22 +141,22 @@ const getStretchesExercise = async (req, res) => {
 					},
 				},
 			]);
-			const stretchesexercisesWithImages = await Promise.all(
-				stretchesexercises.map(async (item) => {
-					const updatedItem = item.toObject ? item.toObject() : item;
-					if (item.exercise_Id?.image !== '') {
-						const imageurl = await getFile(item?.image); // Assuming getFile is an async function
-						// console.log("imageurl", imageurl);
-						return {
-							...updatedItem,
-							image: imageurl,
-						}; // Update the image URL
-					}
-					return updatedItem; // Return the item unchanged if no image update is needed
-				})
-			);
+			// const stretchesexercisesWithImages = await Promise.all(
+			// 	stretchesexercises.map(async (item) => {
+			// 		const updatedItem = item.toObject ? item.toObject() : item;
+			// 		if (item.exercise_Id?.image !== '') {
+			// 			const imageurl = await getFile(item?.image); // Assuming getFile is an async function
+			// 			// console.log("imageurl", imageurl);
+			// 			return {
+			// 				...updatedItem,
+			// 				image: imageurl,
+			// 			}; // Update the image URL
+			// 		}
+			// 		return updatedItem; // Return the item unchanged if no image update is needed
+			// 	})
+			// );
 			res.status(200).json({
-				data: { success: 1, exercise: stretchesexercisesWithImages, error: '' },
+				data: { success: 1, exercise: stretchesexercises, error: '' },
 			});
 		} else {
 			res.status(201).json({

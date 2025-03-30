@@ -11,20 +11,20 @@ const getAllDiscovers = async (req, res) => {
 				data: { success: 0, discover: [], error: 'Please Try Again' },
 			});
 		} else {
-			const discoversWithImages = await Promise.all(
-				discovers.map(async (item) => {
-					const updatedItem = item.toObject ? item.toObject() : item;
-					if (item.image !== '') {
-						const imageurl = await getFile(item.image); // Assuming getFile is an async function
-						// console.log("imageurl", imageurl);
-						return { ...updatedItem, image: imageurl }; // Update the image URL
-					}
-					return updatedItem; // Return the item unchanged if no image update is needed
-				})
-			);
+			// const discoversWithImages = await Promise.all(
+			// 	discovers.map(async (item) => {
+			// 		const updatedItem = item.toObject ? item.toObject() : item;
+			// 		if (item.image !== '') {
+			// 			const imageurl = await getFile(item.image); // Assuming getFile is an async function
+			// 			// console.log("imageurl", imageurl);
+			// 			return { ...updatedItem, image: imageurl }; // Update the image URL
+			// 		}
+			// 		return updatedItem; // Return the item unchanged if no image update is needed
+			// 	})
+			// );
 
 			res.status(200).json({
-				data: { success: 1, discover: discoversWithImages, error: '' },
+				data: { success: 1, discover: discovers, error: '' },
 			});
 		}
 	} catch (e) {
@@ -70,22 +70,22 @@ const getDiscoverExercise = async (req, res) => {
 					},
 				},
 			]);
-			const discoverexercisesWithImages = await Promise.all(
-				discoversexercises.map(async (item) => {
-					const updatedItem = item.toObject ? item.toObject() : item;
-					if (item.exercise_Id?.image !== '') {
-						const imageurl = await getFile(item?.image); // Assuming getFile is an async function
-						// console.log("imageurl", imageurl);
-						return {
-							...updatedItem,
-							image: imageurl,
-						}; // Update the image URL
-					}
-					return updatedItem; // Return the item unchanged if no image update is needed
-				})
-			);
+			// const discoverexercisesWithImages = await Promise.all(
+			// 	discoversexercises.map(async (item) => {
+			// 		const updatedItem = item.toObject ? item.toObject() : item;
+			// 		if (item.exercise_Id?.image !== '') {
+			// 			const imageurl = await getFile(item?.image); // Assuming getFile is an async function
+			// 			// console.log("imageurl", imageurl);
+			// 			return {
+			// 				...updatedItem,
+			// 				image: imageurl,
+			// 			}; // Update the image URL
+			// 		}
+			// 		return updatedItem; // Return the item unchanged if no image update is needed
+			// 	})
+			// );
 			res.status(200).json({
-				data: { success: 1, exercise: discoverexercisesWithImages, error: '' },
+				data: { success: 1, exercise: discoversexercises, error: '' },
 			});
 		}
 		else {

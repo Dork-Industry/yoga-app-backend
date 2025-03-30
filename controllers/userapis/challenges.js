@@ -97,7 +97,7 @@ const getAllChallenges = async (req, res) => {
 									// console.log("imageurl", imageurl);
 									return {
 										...updatedItem,
-										image: imageurl,
+										// image: imageurl,
 										totalweek: totalweeks.totalWeeks,
 										totaldays: totalweeks.totalday,
 										totaldayscompleted: totalweekanddaycompleted.totalday,
@@ -143,7 +143,7 @@ const getAllChallenges = async (req, res) => {
 							// console.log("imageurl", imageurl);
 							return {
 								...updatedItem,
-								image: imageurl,
+								// image: imageurl,
 								totalweek: totalweeks.totalWeeks,
 								totaldays: totalweeks.totalday,
 								totaldayscompleted: 0,
