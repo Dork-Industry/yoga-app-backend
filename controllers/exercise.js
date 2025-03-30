@@ -6,6 +6,8 @@ const yogaworkoutCategoryexercise = require('../models/categoryexercise');
 const yogaworkoutDiscoverexercise = require('../models/discoverexercise');
 const yogaworkoutQuickworkoutexercise = require('../models/quickworkoutexercise');
 const yogaworkoutStretchesexercise = require('../models/stretchesexercise');
+const path = require('path');
+const fs = require('fs').promises
 
 const getAllExercise = async (req, res) => {
 	try {
@@ -13,23 +15,23 @@ const getAllExercise = async (req, res) => {
 		if (exercises.length === 0) {
 			return res.status(200).json({
 				message: 'No Exericises Added!',
-				exercises : []
+				exercises: []
 			});
 		} else {
-			const exercisesWithImages = await Promise.all(
-				exercises.map(async (item) => {
-					const updatedItem = item.toObject ? item.toObject() : item;
-					if (item.image !== '') {
-						const imageurl = await getFile(item.image); // Assuming getFile is an async function
-						// console.log("imageurl", imageurl);
-						return { ...updatedItem, image: imageurl }; // Update the image URL
-					}
-					return updatedItem; // Return the item unchanged if no image update is needed
-				})
-			);
+			// const exercisesWithImages = await Promise.all(
+			// 	exercises.map(async (item) => {
+			// 		const updatedItem = item.toObject ? item.toObject() : item;
+			// 		if (item.image !== '') {
+			// 			const imageurl = await getFile(item.image); // Assuming getFile is an async function
+			// 			// console.log("imageurl", imageurl);
+			// 			return { ...updatedItem, image: imageurl }; // Update the image URL
+			// 		}
+			// 		return updatedItem; // Return the item unchanged if no image update is needed
+			// 	})
+			// );
 
 			res.status(200).json({
-				exercises: exercisesWithImages,
+				exercises: exercises,
 			});
 		}
 	} catch (e) {
@@ -52,13 +54,17 @@ const addExercise = async (req, res) => {
 				message: 'Enter Exercise Time in Minutes!',
 			});
 		}
+		// if (!req.file) {
+		// 	return res.status(400).json({ error: 'No image file provided' });
+		// }
 
 		let image = '';
 		if (req.file) {
-			const imageRes = await uploadFile(req.file, 'Exercise');
-			if (imageRes && imageRes.Key) {
-				image = imageRes.Key;
-			}
+			// const imageRes = await uploadFile(req.file, 'Exercise');
+			// if (imageRes && imageRes.Key) {
+			// 	image = imageRes.Key;
+			// }
+			image = req.file.path;
 		}
 
 		let exerciseName = req.body.exerciseName;
@@ -96,7 +102,7 @@ const updateExercise = async (req, res) => {
 		description: description,
 		isActive: isActive,
 	};
-	console.log('newExercise', newExercise);
+	// console.log('newExercise', newExercise);
 	if (mongoose.Types.ObjectId.isValid(exerciseId)) {
 		const updatedExercise = await yogaworkoutExercise.findByIdAndUpdate(
 			exerciseId,
@@ -145,8 +151,33 @@ const deleteExercise = async (req, res) => {
 				});
 				await yogaworkoutStretchesexercise.deleteMany({ exercise_Id: exerciseId });
 				if (documentExists.image) {
-					ImageToDelet = documentExists.image;
-					const imageRes = await deleteFile(ImageToDelet);
+					try {
+						const fullPath = path.join(__dirname, '..', documentExists.image);
+						// console.log('fullPath', fullPath)
+						const uploadsDir = path.join(__dirname, '..');
+						if (!path.normalize(fullPath).startsWith(path.normalize(uploadsDir))) {
+							throw new Error('Invalid file path - security violation');
+						}
+
+						// Check if file exists before deleting
+						try {
+							await fs.access(fullPath);
+							await fs.unlink(fullPath);
+
+						} catch (fileError) {
+							console.log("fileError", fileError)
+							if (fileError.code === 'ENOENT') {
+								console.warn('File not found, may have been deleted already');
+							} else {
+								throw fileError;
+							}
+						}
+					} catch (fileError) {
+						console.error('Error deleting file:', fileError);
+						// Continue with DB deletion even if file deletion fails
+					}
+					// ImageToDelet = documentExists.image;
+					// const imageRes = await deleteFile(ImageToDelet);
 					// console.log("imageRes", imageRes)
 				}
 			}

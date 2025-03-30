@@ -18,20 +18,65 @@ const planController = require('../../controllers/plan');
 const userController = require('../../controllers/user');
 const settingController = require("../../controllers/setting");
 const router = express.Router();
-const multer = require('multer');
+const path = require('path');
+const multer = require('multer')
+const fs = require('fs')
 
-// Configure multer
-const upload = multer({
-	storage: multer.memoryStorage(),
-	limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB limit
-	fileFilter: (req, file, cb) => {
-		if (file.mimetype.startsWith('image/')) {
-			cb(null, true);
-		} else {
-			cb(new Error('Unsupported file type. Only images are allowed.'), false);
+// Configure storage for Multer
+const createUploader = (category) => {
+	const storage = multer.diskStorage({
+		destination: function (req, file, cb) {
+			const uploadDir = `uploads/${category}`;
+			// const uploadDir = path.join('uploads', category);
+			// Create directory if it doesn't exist
+			fs.mkdir(uploadDir, { recursive: true }, (err) => {
+				if (err) return cb(err);
+				cb(null, uploadDir);
+			});
+		},
+		filename: function (req, file, cb) {
+			const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+			cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
 		}
-	},
-});
+	});
+	return multer({
+		storage: storage,
+		fileFilter: (req, file, cb) => {
+			if (file.mimetype.startsWith('image/')) {
+				cb(null, true);
+			} else {
+				cb(new Error('Only image files are allowed!'), false);
+			}
+		},
+		limits: { fileSize: 1 * 1024 * 1024 } // 5MB limit
+	});
+}
+
+
+
+
+// Create uploaders for different categories
+const exerciseUpload = createUploader('exercise');
+const categoryUpload = createUploader('category');
+const challengesUpload = createUploader('challenges');
+const discoverUpload = createUploader('discover');
+const quickworkoutUpload = createUploader('quickworkout');
+const stretchesUpload = createUploader('stretches');
+
+// // Configure multer
+// const upload = multer({
+// 	storage: multer.memoryStorage(),
+// 	limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB limit
+// 	fileFilter: (req, file, cb) => {
+// 		if (file.mimetype.startsWith('image/')) {
+// 			cb(null, true);
+// 		} else {
+// 			cb(new Error('Unsupported file type. Only images are allowed.'), false);
+// 		}
+// 	},
+// });
+
+
 
 router.post('/login', adminController.Login);
 router.get('/dashboard', authenticate, adminController.Dashboard);
@@ -43,7 +88,7 @@ router.get('/exercise', authenticate, exerciseController.getAllExercise);
 router.post(
 	'/addExercise',
 	authenticate,
-	upload.single('image'),
+	exerciseUpload.single('image'),
 	exerciseController.addExercise
 );
 router.post(
@@ -68,7 +113,7 @@ router.get('/category', authenticate, categoryController.getAllCategories);
 router.post(
 	'/addCategory',
 	authenticate,
-	upload.single('image'),
+	categoryUpload.single('image'),
 	categoryController.addCategory
 );
 router.post(
@@ -116,7 +161,7 @@ router.get('/challenges', authenticate, challengesController.getAllChallenges);
 router.post(
 	'/addChallenges',
 	authenticate,
-	upload.single('image'),
+	challengesUpload.single('image'),
 	challengesController.addChallenges
 );
 router.post(
@@ -187,7 +232,7 @@ router.get('/discover', authenticate, discoverController.getAllDiscovers);
 router.post(
 	'/addDiscover',
 	authenticate,
-	upload.single('image'),
+	discoverUpload.single('image'),
 	discoverController.addDiscover
 );
 router.post(
@@ -239,7 +284,7 @@ router.get(
 router.post(
 	'/addQuickworkout',
 	authenticate,
-	upload.single('image'),
+	quickworkoutUpload.single('image'),
 	quickworkoutController.addQuickworkout
 );
 router.post(
@@ -287,7 +332,7 @@ router.get('/stretches', authenticate, stretchesController.getAllStretches);
 router.post(
 	'/addStretches',
 	authenticate,
-	upload.single('image'),
+	stretchesUpload.single('image'),
 	stretchesController.addStretches
 );
 router.post(
@@ -363,7 +408,7 @@ router.post('/changeuserstatus', authenticate, userController.changeUserStatus);
 
 
 // START: settings module
-router.get('/settings',authenticate,  settingController.settings);
+router.get('/settings', authenticate, settingController.settings);
 router.post('/updatesetting', authenticate, settingController.updateSettings);
 // END: settings module
 
