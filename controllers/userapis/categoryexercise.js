@@ -37,22 +37,22 @@ const getExerciseByCategoryId = async (req, res) => {
 					},
 				},
 			]);
-			const categoryexercisesWithImages = await Promise.all(
-				categoryexercises.map(async (item) => {
-					const updatedItem = item.toObject ? item.toObject() : item;
-					if (item.exercise_Id?.image !== '') {
-						const imageurl = await s3.getFile(item?.image); // Assuming getFile is an async function
-						// console.log("imageurl", imageurl);
-						return {
-							...updatedItem,
-							image: imageurl,
-						}; // Update the image URL
-					}
-					return updatedItem; // Return the item unchanged if no image update is needed
-				})
-			);
+			// const categoryexercisesWithImages = await Promise.all(
+			// 	categoryexercises.map(async (item) => {
+			// 		const updatedItem = item.toObject ? item.toObject() : item;
+			// 		if (item.exercise_Id?.image !== '') {
+			// 			const imageurl = await s3.getFile(item?.image); // Assuming getFile is an async function
+			// 			// console.log("imageurl", imageurl);
+			// 			return {
+			// 				...updatedItem,
+			// 				image: imageurl,
+			// 			}; // Update the image URL
+			// 		}
+			// 		return updatedItem; // Return the item unchanged if no image update is needed
+			// 	})
+			// );
 			res.status(200).json({
-				data: { success: 1, exercise: categoryexercisesWithImages, error: '' },
+				data: { success: 1, exercise: categoryexercises, error: '' },
 			});
 		} else {
 			res.status(200).json({
